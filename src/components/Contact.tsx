@@ -4,7 +4,7 @@ import { Reveal } from './Reveal'
 import TextType from './TextType'
 import { Section } from './Section'
 import { StrokeText } from './StrokeText'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { IconEmail, IconInstagram } from './Icons'
 
 function InstagramButton() {

@@ -1,0 +1,9 @@
+services:
+  - type: static_site
+    name: portfolio
+    env: node
+    branch: main
+    buildCommand: npm run build
+    publishCommand: npm run build
+    publishPath: dist
+    plan: free
