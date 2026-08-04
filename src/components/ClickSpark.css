@@ -1,0 +1,36 @@
+.click-spark-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.click-spark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.4);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 121, 198, 0.75) 35%, rgba(120, 113, 255, 0.0) 64%);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.1), 0 0 14px 18px rgba(191, 90, 242, 0.12);
+  opacity: 0;
+  animation: clickSpark 0.45s ease-out forwards;
+}
+
+@keyframes clickSpark {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.3);
+    filter: blur(0px);
+  }
+  60% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+    filter: blur(2px);
+  }
+}

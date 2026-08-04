@@ -1,0 +1,40 @@
+.gradient-text {
+  display: inline-block;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  position: relative;
+  overflow: hidden;
+  white-space: pre-wrap;
+  animation-name: gradientPan;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-duration: 3.75s;
+  background-repeat: no-repeat;
+  background-position: 0% 50%;
+  text-shadow: 0 4px 30px rgba(64, 121, 255, 0.12);
+}
+
+.gradient-text.with-border {
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.35rem;
+  box-shadow: 0 10px 35px rgba(64, 121, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gradient-text[data-pause-on-hover='true']:hover {
+  animation-play-state: paused;
+}
+
+@keyframes gradientPan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

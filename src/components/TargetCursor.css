@@ -1,0 +1,79 @@
+.target-cursor-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transform: translate3d(-50%, -50%, 0);
+  transition: transform 0.16s ease, border-color 0.2s ease, width 0.2s ease, height 0.2s ease;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.target-cursor-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.target-cursor-corner {
+  display: none;
+}
+
+.corner-tl {
+  top: 50%;
+  left: 50%;
+  transform: translate(-150%, -150%);
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner-tr {
+  top: 50%;
+  left: 50%;
+  transform: translate(50%, -150%);
+  border-left: none;
+  border-bottom: none;
+}
+
+.corner-br {
+  top: 50%;
+  left: 50%;
+  transform: translate(50%, 50%);
+  border-left: none;
+  border-top: none;
+}
+
+.corner-bl {
+  top: 50%;
+  left: 50%;
+  transform: translate(-150%, 50%);
+  border-right: none;
+  border-top: none;
+}
+
+.target-cursor-wrapper.target-active {
+  border-color: rgba(56, 189, 248, 0.95);
+  width: 40px;
+  height: 40px;
+}
+
+.target-cursor-wrapper.target-active .target-cursor-dot {
+  transform: translate(-50%, -50%) scale(1.35);
+  background: #38bdf8;
+}
+
+.target-cursor-wrapper.target-pressed .target-cursor-dot {
+  transform: translate(-50%, -50%) scale(0.75);
+  background: #ffffff;
+}
