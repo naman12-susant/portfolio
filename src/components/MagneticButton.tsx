@@ -5,6 +5,7 @@ type Props = {
   children: ReactNode
   className?: string
   href?: string
+  target?: string
   icon?: ReactNode
   iconPosition?: 'left' | 'right'
   strength?: number
@@ -16,6 +17,7 @@ export function MagneticButton({
   children,
   className = '',
   href,
+  target,
   icon,
   iconPosition = 'right',
   strength = 28,
@@ -57,7 +59,7 @@ export function MagneticButton({
 
   if (href) {
     return (
-      <a ref={ref as RefObject<HTMLAnchorElement>} href={href} {...shared} className={mergedClass}>
+      <a ref={ref as RefObject<HTMLAnchorElement>} href={href} target={target} {...shared} className={mergedClass}>
         {pos === 'left' ? iconElement : null}
         {children}
         {pos === 'right' ? iconElement : null}
