@@ -21,6 +21,7 @@ export function MagneticButton({
   href,
   download,
   target,
+  rel,
   icon,
   iconPosition = 'right',
   strength = 28,
@@ -62,7 +63,15 @@ export function MagneticButton({
 
   if (href) {
     return (
-      <a ref={ref as RefObject<HTMLAnchorElement>} href={href} download={download} target={target} {...shared} className={mergedClass}>
+      <a
+        ref={ref as RefObject<HTMLAnchorElement>}
+        href={href}
+        download={download}
+        target={target}
+        rel={target ? rel : undefined}
+        {...shared}
+        className={mergedClass}
+      >
         {pos === 'left' ? iconElement : null}
         {children}
         {pos === 'right' ? iconElement : null}
