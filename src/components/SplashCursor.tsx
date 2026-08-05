@@ -24,6 +24,14 @@ export function SplashCursor({
   const animationFrameId = useRef(null)
 
   useEffect(() => {
+    // Disable heavy fluid WebGL simulation on mobile touch devices for lag-free 60fps scrolling
+    const isMobileTouch = typeof window !== 'undefined' && (
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.innerWidth < 768 ||
+      'ontouchstart' in window
+    )
+    if (isMobileTouch) return
+
     const canvas = canvasRef.current
     if (!canvas) return
 

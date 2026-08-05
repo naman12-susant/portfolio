@@ -262,21 +262,28 @@ function SceneContent(props: SceneProps) {
       <pointLight position={[-4, -1, -2]} intensity={1.2} color="#2dd4bf" decay={2} />
       <pointLight position={[3, 2, 2]} intensity={1.0} color="#e8a87c" decay={2} />
       <pointLight position={[0, 3, 4]} intensity={0.4} color="#a78bfa" decay={2} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.15, 0]} receiveShadow>
-        <planeGeometry args={[30, 30]} />
-        <MeshReflectorMaterial
-          blur={[450, 120]}
-          resolution={1024}
-          mixBlur={0.78}
-          mixStrength={1.2}
-          roughness={0.85}
-          depthScale={0.8}
-          minDepthThreshold={0.8}
-          maxDepthThreshold={1.4}
-          color="#09121a"
-          metalness={0.3}
-        />
-      </mesh>
+      {typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window) ? (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.15, 0]}>
+          <planeGeometry args={[30, 30]} />
+          <meshStandardMaterial color="#09121a" roughness={0.9} metalness={0.1} />
+        </mesh>
+      ) : (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.15, 0]} receiveShadow>
+          <planeGeometry args={[30, 30]} />
+          <MeshReflectorMaterial
+            blur={[450, 120]}
+            resolution={512}
+            mixBlur={0.78}
+            mixStrength={1.2}
+            roughness={0.85}
+            depthScale={0.8}
+            minDepthThreshold={0.8}
+            maxDepthThreshold={1.4}
+            color="#09121a"
+            metalness={0.3}
+          />
+        </mesh>
+      )}
       <MorphCore {...props} />
       <OrbitField {...props} />
       <DriftCrystals {...props} />
@@ -332,13 +339,15 @@ export function Background3D() {
     }
   }, [])
 
+  const isMobile = typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window)
+
   return (
     <div className="bg3d" aria-hidden>
       <Canvas
-        shadows
-        dpr={[1, 1.5]}
+        shadows={!isMobile}
+        dpr={isMobile ? 1 : [1, 1.25]}
         camera={{ position: [0, 0.2, 6.2], fov: 42 }}
-        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        gl={{ antialias: !isMobile, alpha: false, powerPreference: 'high-performance' }}
         style={{ width: '100%', height: '100%' }}
       >
         <SceneContent
