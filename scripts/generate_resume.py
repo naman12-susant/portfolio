@@ -1,206 +1,228 @@
-"""Generate exact replica of Susant Kumar's Resume PDF."""
+"""Generate exact replica of Susant Kumar's Resume PDF with Times font and clickable links."""
 
 import os
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.colors import HexColor
-from reportlab.pdfgen import canvas
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Spacer, HRFlowable, Table, TableStyle
+)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 
 OUTPUT = os.path.join(os.path.dirname(__file__), '..', 'public', 'Susant_Kumar_Resume.pdf')
 
-# Page dimensions
-W, H = A4  # 210 x 297 mm
-LEFT_MARGIN = 15 * mm
-RIGHT_MARGIN = W - 15 * mm
-USABLE_WIDTH = RIGHT_MARGIN - LEFT_MARGIN
-
-# Colors
-BLACK = HexColor('#000000')
-DARK_GRAY = HexColor('#222222')
-
-def draw_resume(c: canvas.Canvas):
-    y = H - 15 * mm
-
-    # ==================== HEADER ====================
-    # Name - Center aligned, Serif font (Times-Bold)
-    c.setFont('Times-Bold', 22)
-    c.setFillColor(BLACK)
-    c.drawCentredString(W / 2.0, y, 'Susant Kumar')
-    y -= 5 * mm
-
-    # Subtitle - Center aligned, Times-Italic
-    c.setFont('Times-Italic', 10.5)
-    c.setFillColor(DARK_GRAY)
-    c.drawCentredString(W / 2.0, y, 'Aspiring UX/UI Designer & Frontend Developer')
-    y -= 4.5 * mm
-
-    # Contact Info line - Center aligned
-    c.setFont('Helvetica', 8.5)
-    c.setFillColor(BLACK)
-    contact_str = "8420012233   susantnaman@gmail.com   susant-kumar-510687356   naman12-susant   portfolio-rndb"
-    c.drawCentredString(W / 2.0, y, contact_str)
-    y -= 3.8 * mm
-
-    # Location line - Center aligned
-    c.setFont('Helvetica', 8.5)
-    c.drawCentredString(W / 2.0, y, "Kolkata, India")
-    y -= 5 * mm
-
-    # Helper function for section headings
-    def section_heading(title_text):
-        nonlocal y
-        c.setFont('Helvetica-Bold', 10.5)
-        c.setFillColor(BLACK)
-        c.drawString(LEFT_MARGIN, y, title_text)
-        y -= 1.5 * mm
-        c.setStrokeColor(BLACK)
-        c.setLineWidth(0.8)
-        c.line(LEFT_MARGIN, y, RIGHT_MARGIN, y)
-        y -= 3.8 * mm
-
-    # Helper function to wrap text
-    def draw_wrapped_text(text, font_name, font_size, leading, is_bold_prefix=None):
-        nonlocal y
-        c.setFont(font_name, font_size)
-        c.setFillColor(BLACK)
-        
-        words = text.split(' ')
-        line = ""
-        for word in words:
-            test_line = (line + " " + word).strip()
-            if c.stringWidth(test_line, font_name, font_size) > USABLE_WIDTH:
-                c.drawString(LEFT_MARGIN, y, line)
-                y -= leading
-                line = word
-            else:
-                line = test_line
-        if line:
-            c.drawString(LEFT_MARGIN, y, line)
-            y -= leading
-
-    def draw_bullet_item(text, font_name='Helvetica', font_size=8.2, leading=3.4*mm, indent=4*mm):
-        nonlocal y
-        bullet_char = "•"
-        c.setFont('Helvetica-Bold', font_size)
-        c.drawString(LEFT_MARGIN, y, bullet_char)
-        
-        c.setFont(font_name, font_size)
-        c.setFillColor(BLACK)
-        
-        available_w = USABLE_WIDTH - indent
-        words = text.split(' ')
-        line = ""
-        first_line = True
-        for word in words:
-            test_line = (line + " " + word).strip()
-            if c.stringWidth(test_line, font_name, font_size) > available_w:
-                x_pos = LEFT_MARGIN + indent if first_line else LEFT_MARGIN + indent
-                c.drawString(x_pos, y, line)
-                y -= leading
-                line = word
-                first_line = False
-            else:
-                line = test_line
-        if line:
-            x_pos = LEFT_MARGIN + indent
-            c.drawString(x_pos, y, line)
-            y -= leading
-
-    # ==================== PROFESSIONAL SUMMARY ====================
-    section_heading('PROFESSIONAL SUMMARY')
+def build_pdf():
+    os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
     
-    # We will draw summary with bold words where appropriate (or clean formatted text)
-    # Exact text from user resume:
-    summary_p1 = "Aspiring UX/UI designer and frontend developer with a user-centered design mindset and hands-on experience in building intuitive interfaces using React and Tailwind CSS. Passionate about applying human-centered design principles in AI-driven products, demonstrated by developing an end-to-end AI-powered career platform. Proficient in independent work and clear communication through documentation, presentations, and collaborative hackathons. Seeking to advance into a UX/UI-focused role and deepen expertise in design systems, prototyping, and data-informed design practices."
-    draw_wrapped_text(summary_p1, 'Helvetica', 8.2, 3.4*mm)
-    y -= 2 * mm
+    # Target 1-page document with standard margins
+    doc = SimpleDocTemplate(
+        OUTPUT,
+        pagesize=A4,
+        leftMargin=14 * mm,
+        rightMargin=14 * mm,
+        topMargin=10 * mm,
+        bottomMargin=10 * mm
+    )
 
-    # ==================== EDUCATIONS ====================
-    section_heading('EDUCATIONS')
+    styles = getSampleStyleSheet()
 
-    # Line 1: School | Location (Left) and Dates (Right)
-    c.setFont('Helvetica-Bold', 9)
-    c.drawString(LEFT_MARGIN, y, "Bengal Institute of Technology (Techno India Group)")
-    school_w = c.stringWidth("Bengal Institute of Technology (Techno India Group)", 'Helvetica-Bold', 9)
-    c.setFont('Helvetica', 9)
-    c.drawString(LEFT_MARGIN + school_w, y, " | Kolkata, India")
-    c.drawString(RIGHT_MARGIN - c.stringWidth("Sep 2023 - Jul 2027", 'Helvetica', 9), y, "Sep 2023 - Jul 2027")
-    y -= 3.6 * mm
+    # Custom Paragraph Styles using Times-Roman / Times-Bold / Times-Italic font family
+    title_style = ParagraphStyle(
+        'HeaderTitle',
+        parent=styles['Normal'],
+        fontName='Times-Bold',
+        fontSize=20,
+        leading=22,
+        alignment=TA_CENTER,
+        textColor=HexColor('#000000')
+    )
 
-    # Line 2: Degree (Left) and CGPA (Right)
-    c.setFont('Helvetica-Oblique', 8.5)
-    c.drawString(LEFT_MARGIN, y, "Bachelor of Technology (B.Tech) in Information Technology")
-    c.setFont('Helvetica', 8.5)
-    cgpa_str = "CGPA : 6.5"
-    c.drawString(RIGHT_MARGIN - c.stringWidth(cgpa_str, 'Helvetica', 8.5), y, cgpa_str)
-    y -= 3.6 * mm
+    subtitle_style = ParagraphStyle(
+        'HeaderSubtitle',
+        parent=styles['Normal'],
+        fontName='Times-Italic',
+        fontSize=10,
+        leading=12,
+        alignment=TA_CENTER,
+        textColor=HexColor('#222222'),
+        spaceBefore=2
+    )
 
-    # Line 3: Bullet - Expected graduation
-    draw_bullet_item("Expected graduation: May 2027", 'Helvetica', 8.2, 3.4*mm)
-    y -= 2 * mm
+    contact_style = ParagraphStyle(
+        'HeaderContact',
+        parent=styles['Normal'],
+        fontName='Times-Roman',
+        fontSize=8.5,
+        leading=11,
+        alignment=TA_CENTER,
+        textColor=HexColor('#000000'),
+        spaceBefore=3
+    )
 
-    # ==================== PROJECTS ====================
-    section_heading('PROJECTS')
+    section_head_style = ParagraphStyle(
+        'SectionHeading',
+        parent=styles['Normal'],
+        fontName='Times-Bold',
+        fontSize=10.5,
+        leading=12,
+        textColor=HexColor('#000000'),
+        spaceBefore=8,
+        spaceAfter=2
+    )
+
+    body_style = ParagraphStyle(
+        'BodyText',
+        parent=styles['Normal'],
+        fontName='Times-Roman',
+        fontSize=8.5,
+        leading=10.8,
+        textColor=HexColor('#000000'),
+        spaceAfter=3
+    )
+
+    bullet_style = ParagraphStyle(
+        'BulletText',
+        parent=styles['Normal'],
+        fontName='Times-Roman',
+        fontSize=8.5,
+        leading=10.6,
+        leftIndent=12,
+        firstLineIndent=-12,
+        textColor=HexColor('#000000'),
+        spaceAfter=2
+    )
+
+    left_style = ParagraphStyle(
+        'TableLeft',
+        parent=styles['Normal'],
+        fontName='Times-Roman',
+        fontSize=8.5,
+        leading=10.5,
+        alignment=TA_LEFT,
+        textColor=HexColor('#000000')
+    )
+
+    right_style = ParagraphStyle(
+        'TableRight',
+        parent=styles['Normal'],
+        fontName='Times-Roman',
+        fontSize=8.5,
+        leading=10.5,
+        alignment=TA_RIGHT,
+        textColor=HexColor('#000000')
+    )
+
+    story = []
+
+    # ------------------ HEADER ------------------
+    story.append(Paragraph("Susant Kumar", title_style))
+    story.append(Paragraph("Aspiring UX/UI Designer & Frontend Developer", subtitle_style))
+    
+    contact_line = (
+        '📞 <a href="tel:8420012233">8420012233</a> &nbsp;&nbsp;'
+        '✉ <a href="mailto:susantnaman@gmail.com">susantnaman@gmail.com</a> &nbsp;&nbsp;'
+        '🔗 <a href="https://www.linkedin.com/in/susant-kumar-510687356">susant-kumar-510687356</a> &nbsp;&nbsp;'
+        '🔗 <a href="https://github.com/naman12-susant">naman12-susant</a> &nbsp;&nbsp;'
+        '🔗 <a href="https://portfolio-rndb.onrender.com">portfolio-rndb</a>'
+    )
+    story.append(Paragraph(contact_line, contact_style))
+    story.append(Paragraph("📍 Kolkata, India", contact_style))
+    story.append(Spacer(1, 4))
+
+    def add_section_header(title):
+        story.append(Paragraph(title, section_head_style))
+        story.append(HRFlowable(width="100%", thickness=0.8, color=HexColor('#000000'), spaceBefore=1, spaceAfter=4))
+
+    # ------------------ PROFESSIONAL SUMMARY ------------------
+    add_section_header("PROFESSIONAL SUMMARY")
+    summary_text = (
+        "Aspiring <b>UX/UI designer</b> and <b>frontend developer</b> with a user-centered design mindset and hands-on experience in building "
+        "intuitive interfaces using <b>React</b> and <b>Tailwind CSS</b>. Passionate about applying human-centered design principles in AI-driven "
+        "products, demonstrated by developing an end-to-end <b>AI-powered career platform</b>. Proficient in independent work and clear "
+        "communication through documentation, presentations, and collaborative hackathons. Seeking to advance into a <b>UX/UI-focused</b> "
+        "role and deepen expertise in design systems, prototyping, and data-informed design practices."
+    )
+    story.append(Paragraph(summary_text, body_style))
+
+    # ------------------ EDUCATIONS ------------------
+    add_section_header("EDUCATIONS")
+
+    edu_table_data = [
+        [
+            Paragraph("<b>Bengal Institute of Technology (Techno India Group)</b> | Kolkata, India", left_style),
+            Paragraph("Sep 2023 - Jul 2027", right_style)
+        ],
+        [
+            Paragraph("<i>Bachelor of Technology (B.Tech) in Information Technology</i>", left_style),
+            Paragraph("<b>CGPA : 6.5</b>", right_style)
+        ]
+    ]
+    t_edu = Table(edu_table_data, colWidths=[130*mm, 52*mm])
+    t_edu.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING', (0,0), (-1,-1), 0),
+        ('RIGHTPADDING', (0,0), (-1,-1), 0),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 1),
+        ('TOPPADDING', (0,0), (-1,-1), 1),
+    ]))
+    story.append(t_edu)
+    story.append(Paragraph("• <b>Expected graduation:</b> May 2027", bullet_style))
+
+    # ------------------ PROJECTS ------------------
+    add_section_header("PROJECTS")
 
     # Project 1: TalentForge
-    c.setFont('Helvetica-Bold', 9)
-    p1_title = "TalentForge — AI Mock Interview & Resume Optimization Platform | "
-    c.drawString(LEFT_MARGIN, y, p1_title)
-    p1_title_w = c.stringWidth(p1_title, 'Helvetica-Bold', 9)
-    c.setFont('Helvetica', 9)
-    c.drawString(LEFT_MARGIN + p1_title_w, y, "Website")
-    dates_p1 = "Apr 2026 - Present"
-    c.drawString(RIGHT_MARGIN - c.stringWidth(dates_p1, 'Helvetica', 9), y, dates_p1)
-    y -= 3.5 * mm
-
-    c.setFont('Helvetica-Oblique', 8.5)
-    c.drawString(LEFT_MARGIN, y, "Self Project")
-    y -= 3.5 * mm
-
-    draw_wrapped_text("Developed a full-stack AI-powered career preparation platform to assess resumes against target roles, identify skill gaps, and generate customized resume content.", 'Helvetica', 8.2, 3.4*mm)
-    
-    draw_bullet_item("Designed user-centered interfaces and workflows for resume analysis and mock interview experiences, translating complex AI feedback into clear, actionable steps.", 'Helvetica', 8.2, 3.4*mm)
-    draw_bullet_item("Engineered dynamic AI interviews with adaptive questioning and real-time feedback to enhance user engagement.", 'Helvetica', 8.2, 3.4*mm)
-    draw_bullet_item("Implemented resume validation, multi-format text extraction, interview attempt tracking, and user authentication to ensure a seamless user experience.", 'Helvetica', 8.2, 3.4*mm)
-    draw_bullet_item("Facilitated downloads of optimized resumes tailored for specific job roles.", 'Helvetica', 8.2, 3.4*mm)
-
-    c.setFont('Helvetica-Bold', 8.2)
-    tech_label = "Technologies / Tools Used : "
-    c.drawString(LEFT_MARGIN, y, tech_label)
-    tech_w = c.stringWidth(tech_label, 'Helvetica-Bold', 8.2)
-    c.setFont('Helvetica', 8.2)
-    c.drawString(LEFT_MARGIN + tech_w, y, "React, TypeScript, Node.js, Python, MongoDB, Groq AI, Tailwind CSS, REST APIs, WebSockets")
-    y -= 4.5 * mm
+    p1_table_data = [
+        [
+            Paragraph('<b>TalentForge — AI Mock Interview & Resume Optimization Platform</b> | <a href="https://ai-mock-interview-1-2zpu.onrender.com" color="#0000EE"><u>Website</u></a>', left_style),
+            Paragraph("Apr 2026 - Present", right_style)
+        ]
+    ]
+    t_p1 = Table(p1_table_data, colWidths=[135*mm, 47*mm])
+    t_p1.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING', (0,0), (-1,-1), 0),
+        ('RIGHTPADDING', (0,0), (-1,-1), 0),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 1),
+        ('TOPPADDING', (0,0), (-1,-1), 1),
+    ]))
+    story.append(t_p1)
+    story.append(Paragraph("<i>Self Project</i>", body_style))
+    story.append(Paragraph("<b>Developed</b> a full-stack <b>AI-powered career preparation platform</b> to assess resumes against target roles, identify skill gaps, and generate customized resume content.", body_style))
+    story.append(Paragraph("• <b>Designed user-centered interfaces</b> and workflows for resume analysis and mock interview experiences, translating complex AI feedback into clear, actionable steps.", bullet_style))
+    story.append(Paragraph("• <b>Engineered dynamic AI interviews</b> with adaptive questioning and real-time feedback to enhance user engagement.", bullet_style))
+    story.append(Paragraph("• <b>Implemented</b> resume validation, multi-format text extraction, interview attempt tracking, and user authentication to ensure a seamless user experience.", bullet_style))
+    story.append(Paragraph("• <b>Facilitated downloads of optimized resumes</b> tailored for specific job roles.", bullet_style))
+    story.append(Paragraph("<b>Technologies / Tools Used :</b> React, TypeScript, Node.js, Python, MongoDB, Groq AI, Tailwind CSS, REST APIs, WebSockets", body_style))
+    story.append(Spacer(1, 3))
 
     # Project 2: raw-power-athletics
-    c.setFont('Helvetica-Bold', 9)
-    p2_title = "raw-power-athletics | "
-    c.drawString(LEFT_MARGIN, y, p2_title)
-    p2_title_w = c.stringWidth(p2_title, 'Helvetica-Bold', 9)
-    c.setFont('Helvetica', 9)
-    c.drawString(LEFT_MARGIN + p2_title_w, y, "Website")
-    dates_p2 = "Aug 2026 - Present"
-    c.drawString(RIGHT_MARGIN - c.stringWidth(dates_p2, 'Helvetica', 9), y, dates_p2)
-    y -= 3.5 * mm
+    p2_table_data = [
+        [
+            Paragraph('<b>raw-power-athletics</b> | <a href="https://raw-power-athletics.onrender.com" color="#0000EE"><u>Website</u></a>', left_style),
+            Paragraph("Aug 2026 - Present", right_style)
+        ]
+    ]
+    t_p2 = Table(p2_table_data, colWidths=[135*mm, 47*mm])
+    t_p2.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING', (0,0), (-1,-1), 0),
+        ('RIGHTPADDING', (0,0), (-1,-1), 0),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 1),
+        ('TOPPADDING', (0,0), (-1,-1), 1),
+    ]))
+    story.append(t_p2)
+    story.append(Paragraph("<i>Self Project</i>", body_style))
+    story.append(Paragraph("• <b>Developed</b> a comprehensive web application for athletic training using <b>Express</b> and <b>SQLite</b>.", bullet_style))
+    story.append(Paragraph("• <b>Implemented dynamic visualizations</b> with <b>Three.js</b> to enhance user engagement.", bullet_style))
+    story.append(Paragraph("• <b>Designed responsive layouts</b> with CSS, HTML, and JS to ensure optimal user experience across devices.", bullet_style))
+    story.append(Paragraph("<b>Technologies / Tools Used :</b> Express, SQLite, Three.js, CSS, HTML, JS", body_style))
 
-    c.setFont('Helvetica-Oblique', 8.5)
-    c.drawString(LEFT_MARGIN, y, "Self Project")
-    y -= 3.5 * mm
+    # ------------------ SKILLS ------------------
+    add_section_header("SKILLS")
 
-    draw_bullet_item("Developed a comprehensive web application for athletic training using Express and SQLite.", 'Helvetica', 8.2, 3.4*mm)
-    draw_bullet_item("Implemented dynamic visualizations with Three.js to enhance user engagement.", 'Helvetica', 8.2, 3.4*mm)
-    draw_bullet_item("Designed responsive layouts with CSS, HTML, and JS to ensure optimal user experience across devices.", 'Helvetica', 8.2, 3.4*mm)
-
-    c.setFont('Helvetica-Bold', 8.2)
-    c.drawString(LEFT_MARGIN, y, tech_label)
-    c.setFont('Helvetica', 8.2)
-    c.drawString(LEFT_MARGIN + tech_w, y, "Express, SQLite, Three.js, CSS, HTML, JS")
-    y -= 4.5 * mm
-
-    # ==================== SKILLS ====================
-    section_heading('SKILLS')
-
-    skills_data = [
+    skills = [
         ("Databases :", "MySQL, MongoDB"),
         ("Frameworks & Libraries :", "React, Tailwind CSS, Three.js, Framer Motion, GSAP"),
         ("Languages :", "English, Hindi"),
@@ -209,42 +231,43 @@ def draw_resume(c: canvas.Canvas):
         ("Tools & Platforms :", "Git, GitHub, Vite"),
     ]
 
-    for label, val in skills_data:
-        c.setFont('Helvetica-Bold', 8.2)
-        c.drawString(LEFT_MARGIN, y, label)
-        c.setFont('Helvetica', 8.2)
-        c.drawString(LEFT_MARGIN + 45 * mm, y, val)
-        y -= 3.5 * mm
-    y -= 2 * mm
+    skills_table_data = []
+    for label, items in skills:
+        skills_table_data.append([
+            Paragraph(f"<b>{label}</b>", left_style),
+            Paragraph(items, left_style)
+        ])
+    
+    t_skills = Table(skills_table_data, colWidths=[48*mm, 134*mm])
+    t_skills.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING', (0,0), (-1,-1), 0),
+        ('RIGHTPADDING', (0,0), (-1,-1), 0),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 1),
+        ('TOPPADDING', (0,0), (-1,-1), 1),
+    ]))
+    story.append(t_skills)
 
-    # ==================== AWARDS & ACHIEVEMENTS ====================
-    section_heading('AWARDS & ACHIEVEMENTS')
+    # ------------------ AWARDS & ACHIEVEMENTS ------------------
+    add_section_header("AWARDS & ACHIEVEMENTS")
 
-    awards_list = [
-        "Semi-Finalist, ET-AI Hackathon 2026 – The Economic Times",
-        "Participant: Machine Learning Hackathon (IIT Bhubaneswar)",
-        "Participant: Shaastra Smart City Challenge (IIT Madras)",
-        "Participant: Project Horizon: GPAI Case Competition (IIT Madras)",
-        "Participant: EY Techathon 6.0 (EY)",
-        "Participant: HackWithUttarPradesh 2025 (Chandigarh University)",
-        "Participant: Frontend Battle – Vibe Coding Competition (IIT Bhubaneswar)",
-        "Participant: Ethos Hackathons 2025 (IIT Guwahati)",
-        "Participant: HP Power Lab 2.0 (HPCL)",
+    awards = [
+        "• <b>Semi-Finalist, ET-AI Hackathon 2026</b> – The Economic Times",
+        "• <b>Participant:</b> Machine Learning Hackathon (IIT Bhubaneswar)",
+        "• <b>Participant:</b> Shaastra Smart City Challenge (IIT Madras)",
+        "• <b>Participant:</b> Project Horizon: GPAI Case Competition (IIT Madras)",
+        "• <b>Participant:</b> EY Techathon 6.0 (EY)",
+        "• <b>Participant:</b> HackWithUttarPradesh 2025 (Chandigarh University)",
+        "• <b>Participant:</b> Frontend Battle – Vibe Coding Competition (IIT Bhubaneswar)",
+        "• <b>Participant:</b> Ethos Hackathons 2025 (IIT Guwahati)",
+        "• <b>Participant:</b> HP Power Lab 2.0 (HPCL)",
     ]
 
-    for award in awards_list:
-        draw_bullet_item(award, 'Helvetica', 8.2, 3.2*mm)
+    for award in awards:
+        story.append(Paragraph(award, bullet_style))
 
-
-def main():
-    os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
-    c = canvas.Canvas(OUTPUT, pagesize=A4)
-    c.setTitle('Susant Kumar - Resume')
-    c.setAuthor('Susant Kumar')
-    draw_resume(c)
-    c.save()
-    print(f'[OK] Exact Resume PDF saved to {os.path.abspath(OUTPUT)}')
-
+    doc.build(story)
+    print(f'[OK] Perfect Resume PDF generated at {os.path.abspath(OUTPUT)}')
 
 if __name__ == '__main__':
-    main()
+    build_pdf()
