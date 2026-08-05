@@ -139,6 +139,13 @@ export function Hero() {
             </MagneticButton>
             <MagneticButton
               className="btn btn--ghost"
+              href="/Susant_Kumar_Resume.pdf"
+              download
+            >
+              Download Resume
+            </MagneticButton>
+            <MagneticButton
+              className="btn btn--ghost"
               href="#contact"
               onClick={(e) => {
                 e.preventDefault()
