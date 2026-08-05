@@ -54,6 +54,11 @@ class ImageItem {
       height: r.height || 140
     };
   }
+  destroy() {
+    if (this.resize) {
+      window.removeEventListener('resize', this.resize);
+    }
+  }
 }
 
 class ImageTrailEngine {
@@ -69,6 +74,10 @@ class ImageTrailEngine {
   mousePos: { x: number; y: number };
   lastMousePos: { x: number; y: number };
   cacheMousePos: { x: number; y: number };
+  rafId: number | null = null;
+  targetElement: HTMLElement | Window | null = null;
+  handlePointerMove: ((ev: MouseEvent | TouchEvent) => void) | null = null;
+  initRender: ((ev: MouseEvent | TouchEvent) => void) | null = null;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -79,31 +88,41 @@ class ImageTrailEngine {
     this.zIndexVal = 10;
     this.activeImagesCount = 0;
     this.isIdle = true;
-    this.threshold = 40; // Lower threshold so trail triggers easily
+    this.threshold = 40;
 
     this.mousePos = { x: 0, y: 0 };
     this.lastMousePos = { x: 0, y: 0 };
     this.cacheMousePos = { x: 0, y: 0 };
 
-    const handlePointerMove = (ev: MouseEvent | TouchEvent) => {
+    // Issue 1 Fix: Register mousemove and touchmove on interactive parent or window
+    this.targetElement = container.parentElement || window;
+
+    this.handlePointerMove = (ev: MouseEvent | TouchEvent) => {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
     };
-    container.addEventListener('mousemove', handlePointerMove as EventListener);
-    container.addEventListener('touchmove', handlePointerMove as EventListener);
+    this.targetElement.addEventListener('mousemove', this.handlePointerMove as EventListener);
+    this.targetElement.addEventListener('touchmove', this.handlePointerMove as EventListener);
 
-    const initRender = (ev: MouseEvent | TouchEvent) => {
+    this.initRender = (ev: MouseEvent | TouchEvent) => {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
       this.cacheMousePos = { ...this.mousePos };
 
-      requestAnimationFrame(() => this.render());
+      this.loop();
 
-      container.removeEventListener('mousemove', initRender as EventListener);
-      container.removeEventListener('touchmove', initRender as EventListener);
+      if (this.targetElement && this.initRender) {
+        this.targetElement.removeEventListener('mousemove', this.initRender as EventListener);
+        this.targetElement.removeEventListener('touchmove', this.initRender as EventListener);
+      }
     };
-    container.addEventListener('mousemove', initRender as EventListener);
-    container.addEventListener('touchmove', initRender as EventListener);
+    this.targetElement.addEventListener('mousemove', this.initRender as EventListener);
+    this.targetElement.addEventListener('touchmove', this.initRender as EventListener);
+  }
+
+  loop() {
+    this.render();
+    this.rafId = requestAnimationFrame(() => this.loop());
   }
 
   render() {
@@ -118,7 +137,6 @@ class ImageTrailEngine {
     if (this.isIdle && this.zIndexVal !== 10) {
       this.zIndexVal = 10;
     }
-    requestAnimationFrame(() => this.render());
   }
 
   showNextImage() {
@@ -175,6 +193,28 @@ class ImageTrailEngine {
       this.isIdle = true;
     }
   }
+
+  // Issue 2 Fix: Implement destroy method to cancel RAF loop, remove event listeners and kill tweens
+  destroy() {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+    if (this.targetElement) {
+      if (this.handlePointerMove) {
+        this.targetElement.removeEventListener('mousemove', this.handlePointerMove as EventListener);
+        this.targetElement.removeEventListener('touchmove', this.handlePointerMove as EventListener);
+      }
+      if (this.initRender) {
+        this.targetElement.removeEventListener('mousemove', this.initRender as EventListener);
+        this.targetElement.removeEventListener('touchmove', this.initRender as EventListener);
+      }
+    }
+    this.images.forEach(img => {
+      img.destroy();
+      if (img.DOM.el) gsap.killTweensOf(img.DOM.el);
+    });
+  }
 }
 
 type Props = {
@@ -187,7 +227,10 @@ export default function ImageTrail({ items = [] }: Props) {
 
   useEffect(() => {
     if (!containerRef.current || items.length === 0) return;
-    new ImageTrailEngine(containerRef.current);
+    const engine = new ImageTrailEngine(containerRef.current);
+    return () => {
+      engine.destroy();
+    };
   }, [items]);
 
   return (

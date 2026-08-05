@@ -552,14 +552,61 @@ ul {
   display: grid;
   place-items: center;
   border-radius: 2rem;
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  min-height: min(62vh, 520px);
+  overflow: visible;
   z-index: 2;
+  transition: transform 0.35s var(--ease);
+}
+
+.hero__card-inner {
+  position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
   padding: 1.2rem;
-  box-shadow: 0 40px 140px rgba(0, 0, 0, 0.28);
-  transition: transform 0.35s var(--ease), background 0.35s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 40px 140px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  width: 100%;
+  max-width: 440px;
+}
+
+.hero__card-badge {
+  position: absolute;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: rgba(18, 21, 26, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--ink);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.hero__card-badge.top-left {
+  top: 1.8rem;
+  left: 1.8rem;
+}
+
+.hero__card-badge.bottom-right {
+  bottom: 1.8rem;
+  right: 1.8rem;
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(167, 139, 250, 0.2));
+  border-color: rgba(45, 212, 191, 0.4);
+}
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 10px var(--teal);
 }
 
 .hero__visual:hover {

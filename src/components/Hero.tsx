@@ -160,19 +160,32 @@ export function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          whileHover={{ translateY: -6 }}
+          whileHover={{ translateY: -6, rotateX: 2, rotateY: -2 }}
           transition={{ type: 'spring', stiffness: 240, damping: 20 }}
-          style={{ position: 'relative', overflow: 'hidden' }}
+          style={{ position: 'relative', overflow: 'visible' }}
         >
           <ImageTrail items={trailImages} variant={1} />
-          <motion.img
-            src={heroImage}
-            alt="Susant Kumar"
-            className="hero__image"
-            whileHover={{ scale: 1.04 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          />
-          <div className="hero__visual-glow" aria-hidden />
+          
+          <div className="hero__card-inner">
+            <motion.img
+              src={heroImage}
+              alt="Susant Kumar"
+              className="hero__image"
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            />
+            
+            <div className="hero__card-badge top-left">
+              <span className="badge-dot" />
+              <span>Susant Kumar</span>
+            </div>
+
+            <div className="hero__card-badge bottom-right">
+              <span>✨ Hover / Touch to reveal trail</span>
+            </div>
+
+            <div className="hero__visual-glow" aria-hidden />
+          </div>
         </motion.div>
       </div>
     </Section>
