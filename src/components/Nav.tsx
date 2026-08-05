@@ -82,6 +82,7 @@ export function Nav() {
           onMenuOpen={() => setOpen(true)}
           onMenuClose={() => setOpen(false)}
           onItemClick={handleItemClick}
+          resumeHref="/Susant_Kumar_Resume.pdf"
           className="nav-staggered-menu"
         />
       </div>

@@ -40,6 +40,7 @@ type Props = {
   onMenuOpen?: () => void
   onMenuClose?: () => void
   onItemClick?: (link: string) => void
+  resumeHref?: string
 }
 
 const defaultItems: StaggeredMenuItem[] = []
@@ -64,6 +65,7 @@ export function StaggeredMenu({
   onMenuOpen,
   onMenuClose,
   onItemClick,
+  resumeHref,
 }: Props) {
   const [open, setOpen] = useState(false)
   const openRef = useRef(false)
@@ -394,6 +396,22 @@ export function StaggeredMenu({
         <div className="sm-logo" aria-label="Logo">
           {brandContent}
         </div>
+        <div className="sm-header-actions">
+          {resumeHref && (
+            <a
+              href={resumeHref}
+              download
+              className="sm-resume-btn"
+              aria-label="Download resume"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>Resume</span>
+            </a>
+          )}
         <button
           ref={toggleBtnRef}
           className="sm-toggle"
@@ -415,6 +433,7 @@ export function StaggeredMenu({
             <span ref={plusVRef} className="sm-icon-line sm-icon-line-v" />
           </span>
         </button>
+        </div>
       </header>
       <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>
         <div className="sm-panel-inner">
