@@ -1,8 +1,8 @@
 import { resume } from '../data/resume'
 import { Reveal } from './Reveal'
-import TextType from './TextType'
 import { Section } from './Section'
 import { StrokeText } from './StrokeText'
+import GradientText from './GradientText'
 
 export function Education() {
   const { education } = resume
@@ -31,35 +31,35 @@ export function Education() {
 
       <Reveal delay={0.1}>
         <div className="edu-card">
-          <TextType
-            as="h3"
-            className="edu-card__school"
-            text={[education.institution]}
-            typingSpeed={42}
-            loop={false}
-            startOnVisible
-            showCursor={false}
-          />
-          <TextType
-            as="p"
-            className="edu-card__degree"
-            text={[education.degree]}
-            typingSpeed={42}
-            loop={false}
-            startOnVisible
-            showCursor={false}
-          />
+          <h3 className="edu-card__school">
+            <GradientText
+              colors={['#40ffaa', '#4079ff', '#a78bfa', '#40ffaa']}
+              animationSpeed={3}
+              showBorder={false}
+            >
+              {education.institution}
+            </GradientText>
+          </h3>
+          <p className="edu-card__degree">
+            <GradientText
+              colors={['#e8a87c', '#2dd4bf', '#e8a87c']}
+              animationSpeed={4}
+              showBorder={false}
+            >
+              {education.degree}
+            </GradientText>
+          </p>
           <div className="edu-card__meta">
-            {/* Only show remaining education meta if provided */}
             {education.location ? (
-              <TextType
-                as="span"
-                text={[education.location]}
-                typingSpeed={36}
-                loop={false}
-                startOnVisible
-                showCursor={false}
-              />
+              <span>
+                <GradientText
+                  colors={['#9aa3b2', '#f4efe6', '#9aa3b2']}
+                  animationSpeed={5}
+                  showBorder={false}
+                >
+                  {education.location}
+                </GradientText>
+              </span>
             ) : null}
           </div>
         </div>
