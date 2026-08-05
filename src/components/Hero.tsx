@@ -171,15 +171,6 @@ export function Hero() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             />
             
-            <div className="hero__card-badge top-left">
-              <span className="badge-dot" />
-              <span>Susant Kumar</span>
-            </div>
-
-            <div className="hero__card-badge bottom-right">
-              <span>✨ Hover / Touch to reveal trail</span>
-            </div>
-
             <div className="hero__visual-glow" aria-hidden />
           </div>
         </motion.div>
