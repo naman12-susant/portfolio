@@ -5,12 +5,21 @@ import TextType from './TextType'
 import { Section } from './Section'
 import { StrokeText } from './StrokeText'
 import { useRef, useState } from 'react'
-import { IconEmail, IconInstagram } from './Icons'
+
+import instagramLogo from '../assets/logos/instagram.png'
+import githubLogo from '../assets/logos/github.png'
+import linkedinLogo from '../assets/logos/linkedin.png'
+import gmailLogo from '../assets/logos/gmail.png'
+
+const IconInstagramLogo = () => <img src={instagramLogo} alt="Instagram" style={{ width: '24px', height: '24px', borderRadius: '4px', objectFit: 'cover' }} />
+const IconGithubLogo = () => <img src={githubLogo} alt="GitHub" style={{ width: '24px', height: '24px', borderRadius: '4px', objectFit: 'cover' }} />
+const IconLinkedinLogo = () => <img src={linkedinLogo} alt="LinkedIn" style={{ width: '24px', height: '24px', borderRadius: '4px', objectFit: 'cover' }} />
+const IconGmailLogo = () => <img src={gmailLogo} alt="Gmail" style={{ width: '24px', height: '24px', borderRadius: '4px', objectFit: 'cover' }} />
+
 
 function InstagramButton() {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement | null>(null)
-  // show menu on hover instead of click
 
   const handleOpen = (url?: string) => {
     if (!url) return
@@ -27,7 +36,7 @@ function InstagramButton() {
 
   return (
     <div className="instagram-wrap" ref={wrapRef} onKeyDown={handleKey} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-    <MagneticButton className="btn btn--ghost" icon={<IconInstagram />}>
+    <MagneticButton className="btn btn--ghost" icon={<IconInstagramLogo />}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.125rem' }}>
           <span style={{ fontWeight: 600 }}>Instagram</span>
           <small style={{ opacity: 0.95 }}>
@@ -97,83 +106,6 @@ export function Contact() {
       <Reveal delay={0.1}>
         <div className="contact__panel">
           <div className="contact__links">
-            <a className="contact__link" href={`mailto:${resume.email}`}>
-              <small>
-                <TextType
-                  as="span"
-                  text={['Email']}
-                  typingSpeed={34}
-                  loop={false}
-                  startOnVisible
-                  showCursor={false}
-                />
-              </small>
-              <strong>
-                <TextType
-                  as="span"
-                  text={[resume.email]}
-                  typingSpeed={34}
-                  loop={false}
-                  startOnVisible
-                  showCursor={false}
-                />
-              </strong>
-            </a>
-            {/* Combined Instagram button opens both profiles */}
-            <a
-              className="contact__link"
-              href={resume.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <small>
-                <TextType
-                  as="span"
-                  text={['LinkedIn']}
-                  typingSpeed={34}
-                  loop={false}
-                  startOnVisible
-                  showCursor={false}
-                />
-              </small>
-              <strong>
-                <TextType
-                  as="span"
-                  text={['susant-kumar']}
-                  typingSpeed={34}
-                  loop={false}
-                  startOnVisible
-                  showCursor={false}
-                />
-              </strong>
-            </a>
-            <a
-              className="contact__link"
-              href={resume.github}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <small>
-                <TextType
-                  as="span"
-                  text={['GitHub']}
-                  typingSpeed={34}
-                  loop={false}
-                  startOnVisible
-                  showCursor={false}
-                />
-              </small>
-              <strong>
-                <TextType
-                  as="span"
-                  text={['@susantkumar']}
-                  typingSpeed={34}
-                  loop={false}
-                  startOnVisible
-                  showCursor={false}
-                />
-              </strong>
-            </a>
             {resume.location ? (
               <div className="contact__link">
                 <small>
@@ -200,16 +132,26 @@ export function Contact() {
             ) : null}
           </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <InstagramButton />
+          <div className="contact__social-buttons" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <InstagramButton />
+            
+            <MagneticButton className="btn btn--ghost" href={resume.github} target="_blank" icon={<IconGithubLogo />}>
+              <span style={{ fontWeight: 600 }}>GitHub</span>
+              <span className="btn__arrow" aria-hidden>↗</span>
+            </MagneticButton>
 
-                <MagneticButton className="btn btn--primary" href={`mailto:${resume.email}`} icon={<IconEmail />}>
-                  Start a conversation
-                  <span className="btn__arrow" aria-hidden>
-                    →
-                  </span>
-                </MagneticButton>
-              </div>
+            <MagneticButton className="btn btn--ghost" href={resume.linkedin} target="_blank" icon={<IconLinkedinLogo />}>
+              <span style={{ fontWeight: 600 }}>LinkedIn</span>
+              <span className="btn__arrow" aria-hidden>↗</span>
+            </MagneticButton>
+
+            <MagneticButton className="btn btn--primary" href={`mailto:${resume.email}`} icon={<IconGmailLogo />}>
+              Start a conversation
+              <span className="btn__arrow" aria-hidden>
+                →
+              </span>
+            </MagneticButton>
+          </div>
         </div>
       </Reveal>
     </Section>
