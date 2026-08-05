@@ -7,6 +7,14 @@ import TextType from './TextType'
 import { useSectionTransition } from './TransitionProvider'
 import { Section } from './Section'
 import heroImage from '../assets/naman_2.jpeg'
+import heroPng from '../assets/hero.png'
+import instagramLogo from '../assets/logos/instagram.png'
+import githubLogo from '../assets/logos/github.png'
+import linkedinLogo from '../assets/logos/linkedin.png'
+import gmailLogo from '../assets/logos/gmail.png'
+import ImageTrail from './ImageTrail'
+
+const trailImages = [heroImage, heroPng, instagramLogo, githubLogo, linkedinLogo, gmailLogo, heroImage]
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -154,7 +162,9 @@ export function Hero() {
           animate="show"
           whileHover={{ translateY: -6 }}
           transition={{ type: 'spring', stiffness: 240, damping: 20 }}
+          style={{ position: 'relative', overflow: 'hidden' }}
         >
+          <ImageTrail items={trailImages} variant={1} />
           <motion.img
             src={heroImage}
             alt="Susant Kumar"

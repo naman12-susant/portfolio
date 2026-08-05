@@ -145,10 +145,22 @@ export function Contact() {
               <span className="btn__arrow" aria-hidden>↗</span>
             </MagneticButton>
 
-            <MagneticButton className="btn btn--primary" href={`mailto:${resume.email}`} icon={<IconGmailLogo />}>
-              Start a conversation
+            <MagneticButton
+              className="btn btn--primary"
+              href={`https://mail.google.com/mail/?view=cm&fs=1&to=${resume.email}`}
+              target="_blank"
+              icon={<IconGmailLogo />}
+              onClick={() => {
+                // Also trigger mailto as fallback and copy to clipboard
+                navigator.clipboard.writeText(resume.email).catch(() => {})
+              }}
+            >
+              <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.1rem', textAlign: 'left' }}>
+                <span style={{ fontWeight: 700 }}>Email Me</span>
+                <small style={{ fontSize: '0.8rem', opacity: 0.95 }}>{resume.email}</small>
+              </span>
               <span className="btn__arrow" aria-hidden>
-                →
+                ↗
               </span>
             </MagneticButton>
           </div>
