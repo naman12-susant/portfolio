@@ -4,6 +4,14 @@ import { Reveal } from './Reveal'
 import { Section } from './Section'
 import { StrokeText } from './StrokeText'
 import TextType from './TextType'
+import GradientText from './GradientText'
+
+const CARD_COLORS: string[][] = [
+  ['#40ffaa', '#4079ff', '#40ffaa', '#4079ff', '#40ffaa'],
+  ['#e8a87c', '#ff6b6b', '#e8a87c', '#ff6b6b', '#e8a87c'],
+  ['#2dd4bf', '#a78bfa', '#2dd4bf', '#a78bfa', '#2dd4bf'],
+  ['#f0c3a0', '#7ee8d8', '#f0c3a0', '#7ee8d8', '#f0c3a0'],
+]
 
 export function Skills() {
   return (
@@ -48,15 +56,15 @@ export function Skills() {
               whileHover={{ y: -6 }}
               transition={{ type: 'spring', stiffness: 280, damping: 22 }}
             >
-              <TextType
-                as="h3"
-                className="skill-card__name"
-                text={[group.name]}
-                typingSpeed={40}
-                loop={false}
-                startOnVisible
-                showCursor={false}
-              />
+              <h3 className="skill-card__name">
+                <GradientText
+                  colors={CARD_COLORS[i % CARD_COLORS.length]}
+                  animationSpeed={3}
+                  showBorder={false}
+                >
+                  {group.name}
+                </GradientText>
+              </h3>
               <ul>
                 {group.items.map((skill, si) => (
                   <motion.li
@@ -66,14 +74,13 @@ export function Skills() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.05 + si * 0.04, duration: 0.4 }}
                   >
-                    <TextType
-                      as="span"
-                      text={[skill]}
-                      typingSpeed={32}
-                      loop={false}
-                      startOnVisible
-                      showCursor={false}
-                    />
+                    <GradientText
+                      colors={CARD_COLORS[i % CARD_COLORS.length]}
+                      animationSpeed={4 + si * 0.5}
+                      showBorder={false}
+                    >
+                      {skill}
+                    </GradientText>
                   </motion.li>
                 ))}
               </ul>

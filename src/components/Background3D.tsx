@@ -44,18 +44,24 @@ function MorphCore({ scrollProgress, sectionIndex }: SceneProps) {
   return (
     <Float speed={1.2} rotationIntensity={0.35} floatIntensity={0.7}>
       <mesh ref={mesh} position={[1.6, 0.1, -0.4]} castShadow>
-        <icosahedronGeometry args={[1.35, 2]} />
+        <icosahedronGeometry args={[1.35, 4]} />
         <meshPhysicalMaterial
           color="#e8a87c"
-          roughness={0.14}
-          metalness={0.78}
-          clearcoat={0.68}
-          clearcoatRoughness={0.14}
-          reflectivity={0.86}
+          roughness={0.08}
+          metalness={0.88}
+          clearcoat={1.0}
+          clearcoatRoughness={0.05}
+          reflectivity={1.0}
           emissive="#6b3d22"
-          emissiveIntensity={0.22}
-          transmission={0.12}
-          thickness={0.7}
+          emissiveIntensity={0.15}
+          transmission={0.18}
+          thickness={1.2}
+          ior={1.8}
+          sheen={0.3}
+          sheenColor="#ffd4a8"
+          sheenRoughness={0.2}
+          iridescence={0.3}
+          iridescenceIOR={1.3}
         />
       </mesh>
     </Float>
@@ -154,15 +160,21 @@ function Crystal({
 
   return (
     <mesh ref={ref} position={[...pos]} scale={s} castShadow>
-      <octahedronGeometry args={[1, 0]} />
+      <octahedronGeometry args={[1, 2]} />
       <meshPhysicalMaterial
         color={color}
-        roughness={0.22}
-        metalness={0.7}
+        roughness={0.1}
+        metalness={0.85}
         emissive={color}
-        emissiveIntensity={0.35}
-        clearcoat={0.25}
-        clearcoatRoughness={0.35}
+        emissiveIntensity={0.25}
+        clearcoat={0.8}
+        clearcoatRoughness={0.08}
+        reflectivity={0.9}
+        sheen={0.2}
+        sheenColor={color}
+        sheenRoughness={0.15}
+        iridescence={0.4}
+        iridescenceIOR={1.5}
       />
     </mesh>
   )
@@ -181,18 +193,24 @@ function GlassAccent() {
 
   return (
     <mesh ref={mesh} position={[-1.25, -0.4, 0.4]} castShadow>
-      <torusKnotGeometry args={[0.45, 0.14, 160, 20]} />
+      <torusKnotGeometry args={[0.45, 0.14, 256, 32]} />
       <meshPhysicalMaterial
         color="#7ee8d8"
-        roughness={0.12}
-        metalness={0.22}
-        transmission={0.7}
-        thickness={0.9}
-        clearcoat={0.55}
-        clearcoatRoughness={0.1}
-        reflectivity={0.8}
-        attenuationDistance={1.9}
+        roughness={0.02}
+        metalness={0.05}
+        transmission={0.92}
+        thickness={1.4}
+        clearcoat={1.0}
+        clearcoatRoughness={0.03}
+        reflectivity={1.0}
+        ior={1.5}
+        attenuationDistance={1.2}
         attenuationColor="#0b2735"
+        sheen={0.15}
+        sheenColor="#a0fff0"
+        sheenRoughness={0.1}
+        iridescence={0.5}
+        iridescenceIOR={1.3}
       />
     </mesh>
   )
@@ -220,43 +238,49 @@ function SceneContent(props: SceneProps) {
   return (
     <>
       <color attach="background" args={['#0b0d10']} />
-      <fog attach="fog" args={['#0b0d10', 7, 18]} />
-      <ambientLight intensity={0.28} />
-      <hemisphereLight args={[ '#ffffff', '#0b1a2a', 0.18 ]} />
+      <fog attach="fog" args={['#0b0d10', 8, 22]} />
+      <ambientLight intensity={0.18} />
+      <hemisphereLight args={['#ffefd5', '#0b1a2a', 0.25]} />
       <directionalLight
         position={[5.3, 6.8, 3.2]}
-        intensity={1.4}
+        intensity={1.8}
         color="#fff7e6"
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-bias={-0.0007}
+        shadow-bias={-0.0005}
+      />
+      <directionalLight
+        position={[-3, 4, -2]}
+        intensity={0.6}
+        color="#b0d4f1"
       />
       <spotLight
         position={[-2.2, 5.6, 3.8]}
-        angle={0.26}
-        penumbra={0.32}
-        intensity={0.92}
+        angle={0.22}
+        penumbra={0.45}
+        intensity={1.1}
         color="#f3efd8"
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      <pointLight position={[-4, -1, -2]} intensity={1.05} color="#2dd4bf" />
-      <pointLight position={[3, 2, 2]} intensity={0.9} color="#e8a87c" />
+      <pointLight position={[-4, -1, -2]} intensity={1.2} color="#2dd4bf" decay={2} />
+      <pointLight position={[3, 2, 2]} intensity={1.0} color="#e8a87c" decay={2} />
+      <pointLight position={[0, 3, 4]} intensity={0.4} color="#a78bfa" decay={2} />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.15, 0]} receiveShadow>
         <planeGeometry args={[30, 30]} />
         <MeshReflectorMaterial
           blur={[450, 120]}
           resolution={1024}
           mixBlur={0.78}
-          mixStrength={0.9}
-          roughness={0.9}
+          mixStrength={1.2}
+          roughness={0.85}
           depthScale={0.8}
           minDepthThreshold={0.8}
           maxDepthThreshold={1.4}
           color="#09121a"
-          metalness={0.2}
+          metalness={0.3}
         />
       </mesh>
       <MorphCore {...props} />
@@ -264,15 +288,15 @@ function SceneContent(props: SceneProps) {
       <DriftCrystals {...props} />
       <GlassAccent />
       <Sparkles
-        count={70}
+        count={90}
         scale={[14, 10, 8]}
-        size={2}
-        speed={0.35}
-        opacity={0.45}
+        size={2.2}
+        speed={0.3}
+        opacity={0.5}
         color="#f4efe6"
       />
-      <ContactShadows position={[0, -2.05, 0]} opacity={0.45} scale={12} blur={2.5} far={3} />
-      <Environment preset="studio" />
+      <ContactShadows position={[0, -2.05, 0]} opacity={0.55} scale={12} blur={2.5} far={3} />
+      <Environment preset="night" />
       <CameraRig {...props} />
     </>
   )

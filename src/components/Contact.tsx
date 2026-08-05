@@ -7,8 +7,8 @@ import { StrokeText } from './StrokeText'
 import { useRef, useState } from 'react'
 
 import instagramLogo from '../assets/logos/instagram.png'
-import githubLogo from '../assets/logos/github.png'
-import linkedinLogo from '../assets/logos/linkedin.png'
+import githubLogo from '../assets/logos/linkedin.png'
+import linkedinLogo from '../assets/logos/github.png'
 import gmailLogo from '../assets/logos/gmail.png'
 
 const IconInstagramLogo = () => <img src={instagramLogo} alt="Instagram" style={{ width: '24px', height: '24px', borderRadius: '4px', objectFit: 'cover' }} />
