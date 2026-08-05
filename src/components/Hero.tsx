@@ -8,10 +8,6 @@ import { useSectionTransition } from './TransitionProvider'
 import { Section } from './Section'
 import heroImage from '../assets/naman_2.jpeg'
 import heroPng from '../assets/hero.png'
-import instagramLogo from '../assets/logos/instagram.png'
-import githubLogo from '../assets/logos/github.png'
-import linkedinLogo from '../assets/logos/linkedin.png'
-import gmailLogo from '../assets/logos/gmail.png'
 import ImageTrail from './ImageTrail'
 
 const trailImages = [heroImage, heroPng, heroImage, heroPng, heroImage, heroPng, heroImage]
