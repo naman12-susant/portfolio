@@ -42,18 +42,20 @@ export function SplashCursor({
       this.color = [0, 0, 0]
     }
 
+    const isMobile = typeof window !== 'undefined' && (window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window))
+
     let config = {
-      SIM_RESOLUTION,
-      DYE_RESOLUTION,
-      CAPTURE_RESOLUTION,
-      DENSITY_DISSIPATION,
-      VELOCITY_DISSIPATION,
+      SIM_RESOLUTION: isMobile ? 64 : SIM_RESOLUTION,
+      DYE_RESOLUTION: isMobile ? 512 : DYE_RESOLUTION,
+      CAPTURE_RESOLUTION: isMobile ? 256 : CAPTURE_RESOLUTION,
+      DENSITY_DISSIPATION: isMobile ? 4.5 : DENSITY_DISSIPATION,
+      VELOCITY_DISSIPATION: isMobile ? 2.5 : VELOCITY_DISSIPATION,
       PRESSURE,
-      PRESSURE_ITERATIONS,
+      PRESSURE_ITERATIONS: isMobile ? 8 : PRESSURE_ITERATIONS,
       CURL,
-      SPLAT_RADIUS,
-      SPLAT_FORCE,
-      SHADING,
+      SPLAT_RADIUS: isMobile ? 0.35 : SPLAT_RADIUS,
+      SPLAT_FORCE: isMobile ? 4000 : SPLAT_FORCE,
+      SHADING: isMobile ? false : SHADING,
       COLOR_UPDATE_SPEED,
       PAUSED: false,
       BACK_COLOR,
@@ -1003,7 +1005,10 @@ export function SplashCursor({
       for (let i = 0; i < touches.length; i++) {
         let posX = scaleByPixelRatio(touches[i].clientX)
         let posY = scaleByPixelRatio(touches[i].clientY)
+        let color = generateColor()
         updatePointerDownData(pointer, touches[i].identifier, posX, posY)
+        updatePointerMoveData(pointer, posX, posY, color)
+        clickSplat(pointer)
       }
     }
 
@@ -1013,6 +1018,9 @@ export function SplashCursor({
       for (let i = 0; i < touches.length; i++) {
         let posX = scaleByPixelRatio(touches[i].clientX)
         let posY = scaleByPixelRatio(touches[i].clientY)
+        if (!pointer.color || (pointer.color[0] === 0 && pointer.color[1] === 0 && pointer.color[2] === 0)) {
+          pointer.color = generateColor()
+        }
         updatePointerMoveData(pointer, posX, posY, pointer.color)
       }
     }

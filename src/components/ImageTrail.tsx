@@ -12,6 +12,9 @@ function getLocalPointerPos(e: MouseEvent | TouchEvent, rect: DOMRect) {
   if ('touches' in e && e.touches && e.touches.length > 0) {
     clientX = e.touches[0].clientX;
     clientY = e.touches[0].clientY;
+  } else if ('changedTouches' in e && e.changedTouches && e.changedTouches.length > 0) {
+    clientX = e.changedTouches[0].clientX;
+    clientY = e.changedTouches[0].clientY;
   } else if ('clientX' in e) {
     clientX = (e as MouseEvent).clientX;
     clientY = (e as MouseEvent).clientY;
@@ -88,21 +91,21 @@ class ImageTrailEngine {
     this.zIndexVal = 10;
     this.activeImagesCount = 0;
     this.isIdle = true;
-    this.threshold = 40;
+    
+    // Lower threshold on touch screens for touch responsiveness
+    const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || window.matchMedia('(pointer: coarse)').matches);
+    this.threshold = isTouch ? 20 : 35;
 
     this.mousePos = { x: 0, y: 0 };
     this.lastMousePos = { x: 0, y: 0 };
     this.cacheMousePos = { x: 0, y: 0 };
 
-    // Issue 1 Fix: Register mousemove and touchmove on interactive parent or window
     this.targetElement = container.parentElement || window;
 
     this.handlePointerMove = (ev: MouseEvent | TouchEvent) => {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
     };
-    this.targetElement.addEventListener('mousemove', this.handlePointerMove as EventListener);
-    this.targetElement.addEventListener('touchmove', this.handlePointerMove as EventListener);
 
     this.initRender = (ev: MouseEvent | TouchEvent) => {
       const rect = this.container.getBoundingClientRect();
@@ -114,10 +117,18 @@ class ImageTrailEngine {
       if (this.targetElement && this.initRender) {
         this.targetElement.removeEventListener('mousemove', this.initRender as EventListener);
         this.targetElement.removeEventListener('touchmove', this.initRender as EventListener);
+        this.targetElement.removeEventListener('touchstart', this.initRender as EventListener);
       }
     };
-    this.targetElement.addEventListener('mousemove', this.initRender as EventListener);
-    this.targetElement.addEventListener('touchmove', this.initRender as EventListener);
+
+    const options = { passive: true };
+    this.targetElement.addEventListener('mousemove', this.handlePointerMove as EventListener, options);
+    this.targetElement.addEventListener('touchmove', this.handlePointerMove as EventListener, options);
+    this.targetElement.addEventListener('touchstart', this.handlePointerMove as EventListener, options);
+
+    this.targetElement.addEventListener('mousemove', this.initRender as EventListener, options);
+    this.targetElement.addEventListener('touchmove', this.initRender as EventListener, options);
+    this.targetElement.addEventListener('touchstart', this.initRender as EventListener, options);
   }
 
   loop() {
@@ -127,8 +138,8 @@ class ImageTrailEngine {
 
   render() {
     const distance = getMouseDistance(this.mousePos, this.lastMousePos);
-    this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.15);
-    this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.15);
+    this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.18);
+    this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.18);
 
     if (distance > this.threshold) {
       this.showNextImage();
@@ -157,13 +168,13 @@ class ImageTrailEngine {
         img.DOM.el,
         {
           opacity: 1,
-          scale: 0.6,
+          scale: 0.65,
           zIndex: this.zIndexVal,
           x: this.cacheMousePos.x - img.rect.width / 2,
           y: this.cacheMousePos.y - img.rect.height / 2
         },
         {
-          duration: 0.5,
+          duration: 0.45,
           ease: 'power2.out',
           scale: 1,
           x: this.mousePos.x - img.rect.width / 2,
@@ -174,12 +185,12 @@ class ImageTrailEngine {
       .to(
         img.DOM.el,
         {
-          duration: 0.4,
+          duration: 0.35,
           ease: 'power3.in',
           opacity: 0,
           scale: 0.3
         },
-        0.35
+        0.3
       );
   }
 
@@ -194,7 +205,6 @@ class ImageTrailEngine {
     }
   }
 
-  // Issue 2 Fix: Implement destroy method to cancel RAF loop, remove event listeners and kill tweens
   destroy() {
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
@@ -204,10 +214,12 @@ class ImageTrailEngine {
       if (this.handlePointerMove) {
         this.targetElement.removeEventListener('mousemove', this.handlePointerMove as EventListener);
         this.targetElement.removeEventListener('touchmove', this.handlePointerMove as EventListener);
+        this.targetElement.removeEventListener('touchstart', this.handlePointerMove as EventListener);
       }
       if (this.initRender) {
         this.targetElement.removeEventListener('mousemove', this.initRender as EventListener);
         this.targetElement.removeEventListener('touchmove', this.initRender as EventListener);
+        this.targetElement.removeEventListener('touchstart', this.initRender as EventListener);
       }
     }
     this.images.forEach(img => {
