@@ -1,4 +1,4 @@
-"""Generate exact replica of Susant Kumar's Resume PDF with Times font and clickable links."""
+"""Generate exact replica of Susant Kumar's Resume PDF with exact fonts, icons, layout, and active clickable links."""
 
 import os
 from reportlab.lib.pagesizes import A4
@@ -15,12 +15,12 @@ OUTPUT = os.path.join(os.path.dirname(__file__), '..', 'public', 'Susant_Kumar_R
 def build_pdf():
     os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
     
-    # Target 1-page document with standard margins
+    # Target 1-page document with exact 12mm margins
     doc = SimpleDocTemplate(
         OUTPUT,
         pagesize=A4,
-        leftMargin=14 * mm,
-        rightMargin=14 * mm,
+        leftMargin=12 * mm,
+        rightMargin=12 * mm,
         topMargin=10 * mm,
         bottomMargin=10 * mm
     )
@@ -32,8 +32,8 @@ def build_pdf():
         'HeaderTitle',
         parent=styles['Normal'],
         fontName='Times-Bold',
-        fontSize=20,
-        leading=22,
+        fontSize=21,
+        leading=23,
         alignment=TA_CENTER,
         textColor=HexColor('#000000')
     )
@@ -45,7 +45,7 @@ def build_pdf():
         fontSize=10,
         leading=12,
         alignment=TA_CENTER,
-        textColor=HexColor('#222222'),
+        textColor=HexColor('#111111'),
         spaceBefore=2
     )
 
@@ -53,52 +53,63 @@ def build_pdf():
         'HeaderContact',
         parent=styles['Normal'],
         fontName='Times-Roman',
-        fontSize=8.5,
-        leading=11,
+        fontSize=9,
+        leading=12,
         alignment=TA_CENTER,
         textColor=HexColor('#000000'),
         spaceBefore=3
+    )
+
+    location_style = ParagraphStyle(
+        'HeaderLocation',
+        parent=styles['Normal'],
+        fontName='Times-Roman',
+        fontSize=9,
+        leading=12,
+        alignment=TA_CENTER,
+        textColor=HexColor('#000000'),
+        spaceBefore=1
     )
 
     section_head_style = ParagraphStyle(
         'SectionHeading',
         parent=styles['Normal'],
         fontName='Times-Bold',
-        fontSize=10.5,
-        leading=12,
+        fontSize=11,
+        leading=13,
         textColor=HexColor('#000000'),
-        spaceBefore=8,
-        spaceAfter=2
+        spaceBefore=7,
+        spaceAfter=1
     )
 
     body_style = ParagraphStyle(
         'BodyText',
         parent=styles['Normal'],
         fontName='Times-Roman',
-        fontSize=8.5,
-        leading=10.8,
+        fontSize=8.8,
+        leading=11.2,
         textColor=HexColor('#000000'),
-        spaceAfter=3
+        spaceAfter=2
     )
 
     bullet_style = ParagraphStyle(
         'BulletText',
         parent=styles['Normal'],
         fontName='Times-Roman',
-        fontSize=8.5,
-        leading=10.6,
+        fontSize=8.8,
+        leading=11.2,
         leftIndent=12,
         firstLineIndent=-12,
         textColor=HexColor('#000000'),
-        spaceAfter=2
+        spaceAfter=1.5
     )
 
     left_style = ParagraphStyle(
         'TableLeft',
         parent=styles['Normal'],
         fontName='Times-Roman',
-        fontSize=8.5,
-        leading=10.5,
+        fontSize=8.8,
+        leading=11,
         alignment=TA_LEFT,
         textColor=HexColor('#000000')
     )
@@ -107,8 +118,8 @@ def build_pdf():
         'TableRight',
         parent=styles['Normal'],
         fontName='Times-Roman',
-        fontSize=8.5,
-        leading=10.5,
+        fontSize=8.8,
+        leading=11,
         alignment=TA_RIGHT,
         textColor=HexColor('#000000')
     )
@@ -117,22 +128,23 @@ def build_pdf():
 
     # ------------------ HEADER ------------------
     story.append(Paragraph("Susant Kumar", title_style))
-    story.append(Paragraph("Aspiring UX/UI Designer & Frontend Developer", subtitle_style))
+    story.append(Paragraph("<i>Aspiring UX/UI Designer &amp; Frontend Developer</i>", subtitle_style))
     
+    # Icons + Text with full active clickable hyperlinks
     contact_line = (
-        '📞 <a href="tel:8420012233">8420012233</a> &nbsp;&nbsp;'
-        '✉ <a href="mailto:susantnaman@gmail.com">susantnaman@gmail.com</a> &nbsp;&nbsp;'
-        '🔗 <a href="https://www.linkedin.com/in/susant-kumar-510687356">susant-kumar-510687356</a> &nbsp;&nbsp;'
-        '🔗 <a href="https://github.com/naman12-susant">naman12-susant</a> &nbsp;&nbsp;'
-        '🔗 <a href="https://portfolio-rndb.onrender.com">portfolio-rndb</a>'
+        '📞 <a href="tel:8420012233" color="#000000"><u>8420012233</u></a> &nbsp;&nbsp;'
+        '✉ <a href="mailto:susantnaman@gmail.com" color="#000000"><u>susantnaman@gmail.com</u></a> &nbsp;&nbsp;'
+        '🌐 <a href="https://www.linkedin.com/in/susant-kumar-510687356" color="#000000"><u>susant-kumar-510687356</u></a> &nbsp;&nbsp;'
+        '🌐 <a href="https://github.com/naman12-susant" color="#000000"><u>naman12-susant</u></a> &nbsp;&nbsp;'
+        '🌐 <a href="https://portfolio-rndb.onrender.com" color="#000000"><u>portfolio-rndb</u></a>'
     )
     story.append(Paragraph(contact_line, contact_style))
-    story.append(Paragraph("📍 Kolkata, India", contact_style))
-    story.append(Spacer(1, 4))
+    story.append(Paragraph("📍 Kolkata, India", location_style))
+    story.append(Spacer(1, 2))
 
     def add_section_header(title):
-        story.append(Paragraph(title, section_head_style))
-        story.append(HRFlowable(width="100%", thickness=0.8, color=HexColor('#000000'), spaceBefore=1, spaceAfter=4))
+        story.append(Paragraph(f"<b>{title}</b>", section_head_style))
+        story.append(HRFlowable(width="100%", thickness=0.9, color=HexColor('#000000'), spaceBefore=1, spaceAfter=4))
 
     # ------------------ PROFESSIONAL SUMMARY ------------------
     add_section_header("PROFESSIONAL SUMMARY")
@@ -155,10 +167,10 @@ def build_pdf():
         ],
         [
             Paragraph("<i>Bachelor of Technology (B.Tech) in Information Technology</i>", left_style),
-            Paragraph("<b>CGPA : 6.5</b>", right_style)
+            Paragraph("CGPA : 6.5", right_style)
         ]
     ]
-    t_edu = Table(edu_table_data, colWidths=[130*mm, 52*mm])
+    t_edu = Table(edu_table_data, colWidths=[136*mm, 50*mm])
     t_edu.setStyle(TableStyle([
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('LEFTPADDING', (0,0), (-1,-1), 0),
@@ -175,11 +187,11 @@ def build_pdf():
     # Project 1: TalentForge
     p1_table_data = [
         [
-            Paragraph('<b>TalentForge — AI Mock Interview & Resume Optimization Platform</b> | <a href="https://ai-mock-interview-1-2zpu.onrender.com" color="#0000EE"><u>Website</u></a>', left_style),
+            Paragraph('<b>TalentForge — AI Mock Interview &amp; Resume Optimization Platform</b> | 🌐 <a href="https://ai-mock-interview-1-2zpu.onrender.com" color="#0000EE"><u>Website</u></a>', left_style),
             Paragraph("Apr 2026 - Present", right_style)
         ]
     ]
-    t_p1 = Table(p1_table_data, colWidths=[135*mm, 47*mm])
+    t_p1 = Table(p1_table_data, colWidths=[140*mm, 46*mm])
     t_p1.setStyle(TableStyle([
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('LEFTPADDING', (0,0), (-1,-1), 0),
@@ -195,16 +207,16 @@ def build_pdf():
     story.append(Paragraph("• <b>Implemented</b> resume validation, multi-format text extraction, interview attempt tracking, and user authentication to ensure a seamless user experience.", bullet_style))
     story.append(Paragraph("• <b>Facilitated downloads of optimized resumes</b> tailored for specific job roles.", bullet_style))
     story.append(Paragraph("<b>Technologies / Tools Used :</b> React, TypeScript, Node.js, Python, MongoDB, Groq AI, Tailwind CSS, REST APIs, WebSockets", body_style))
-    story.append(Spacer(1, 3))
+    story.append(Spacer(1, 2))
 
     # Project 2: raw-power-athletics
     p2_table_data = [
         [
-            Paragraph('<b>raw-power-athletics</b> | <a href="https://raw-power-athletics.onrender.com" color="#0000EE"><u>Website</u></a>', left_style),
+            Paragraph('<b>raw-power-athletics</b> | 🌐 <a href="https://raw-power-athletics.onrender.com" color="#0000EE"><u>Website</u></a>', left_style),
             Paragraph("Aug 2026 - Present", right_style)
         ]
     ]
-    t_p2 = Table(p2_table_data, colWidths=[135*mm, 47*mm])
+    t_p2 = Table(p2_table_data, colWidths=[140*mm, 46*mm])
     t_p2.setStyle(TableStyle([
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('LEFTPADDING', (0,0), (-1,-1), 0),
@@ -224,11 +236,11 @@ def build_pdf():
 
     skills = [
         ("Databases :", "MySQL, MongoDB"),
-        ("Frameworks & Libraries :", "React, Tailwind CSS, Three.js, Framer Motion, GSAP"),
+        ("Frameworks &amp; Libraries :", "React, Tailwind CSS, Three.js, Framer Motion, GSAP"),
         ("Languages :", "English, Hindi"),
         ("Programming Languages :", "Java, TypeScript"),
         ("Soft Skills :", "Wireframing, Prototyping, User-Centered Design, User Flow Mapping, Visual Composition"),
-        ("Tools & Platforms :", "Git, GitHub, Vite"),
+        ("Tools &amp; Platforms :", "Git, GitHub, Vite"),
     ]
 
     skills_table_data = []
@@ -238,13 +250,13 @@ def build_pdf():
             Paragraph(items, left_style)
         ])
     
-    t_skills = Table(skills_table_data, colWidths=[48*mm, 134*mm])
+    t_skills = Table(skills_table_data, colWidths=[48*mm, 138*mm])
     t_skills.setStyle(TableStyle([
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('LEFTPADDING', (0,0), (-1,-1), 0),
         ('RIGHTPADDING', (0,0), (-1,-1), 0),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 1),
-        ('TOPPADDING', (0,0), (-1,-1), 1),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 0.5),
+        ('TOPPADDING', (0,0), (-1,-1), 0.5),
     ]))
     story.append(t_skills)
 
@@ -267,7 +279,7 @@ def build_pdf():
         story.append(Paragraph(award, bullet_style))
 
     doc.build(story)
-    print(f'[OK] Perfect Resume PDF generated at {os.path.abspath(OUTPUT)}')
+    print(f'[OK] Exact Resume PDF generated successfully at {os.path.abspath(OUTPUT)}')
 
 if __name__ == '__main__':
     build_pdf()
