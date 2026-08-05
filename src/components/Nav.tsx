@@ -34,7 +34,11 @@ export function Nav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [open])
 
-  const menuItems = [...links, { href: `mailto:${resume.email}`, label: 'Email me', ariaLabel: 'Email me' }]
+  const menuItems = [
+    ...links,
+    { href: '/resume/Susant_Kumar_Resume.pdf', label: 'Download Resume', ariaLabel: 'Download resume' },
+    { href: `mailto:${resume.email}`, label: 'Email me', ariaLabel: 'Email me' },
+  ]
 
   const mappedMenuItems = menuItems.map((item) => ({
     label: item.label,
@@ -44,6 +48,10 @@ export function Nav() {
 
   const handleItemClick = (href: string) => {
     if (href.startsWith('mailto:')) {
+      window.location.href = href
+      return
+    }
+    if (href.startsWith('/') && !href.startsWith('#')) {
       window.location.href = href
       return
     }
@@ -82,7 +90,8 @@ export function Nav() {
           onMenuOpen={() => setOpen(true)}
           onMenuClose={() => setOpen(false)}
           onItemClick={handleItemClick}
-          resumeHref="/Susant_Kumar_Resume.pdf"
+          resumeHref="/resume/Susant_Kumar_Resume.pdf"
+          resumeDownload="Susant_Kumar_Resume.pdf"
           className="nav-staggered-menu"
         />
       </div>

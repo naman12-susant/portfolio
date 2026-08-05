@@ -41,6 +41,7 @@ type Props = {
   onMenuClose?: () => void
   onItemClick?: (link: string) => void
   resumeHref?: string
+  resumeDownload?: string
 }
 
 const defaultItems: StaggeredMenuItem[] = []
@@ -66,6 +67,7 @@ export function StaggeredMenu({
   onMenuClose,
   onItemClick,
   resumeHref,
+  resumeDownload,
 }: Props) {
   const [open, setOpen] = useState(false)
   const openRef = useRef(false)
@@ -400,7 +402,7 @@ export function StaggeredMenu({
           {resumeHref && (
             <a
               href={resumeHref}
-              download
+              download={resumeDownload ?? true}
               className="sm-resume-btn"
               aria-label="Download resume"
             >

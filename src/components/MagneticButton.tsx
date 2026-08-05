@@ -7,6 +7,7 @@ type Props = {
   href?: string
   download?: boolean | string
   target?: string
+  rel?: string
   icon?: ReactNode
   iconPosition?: 'left' | 'right'
   strength?: number

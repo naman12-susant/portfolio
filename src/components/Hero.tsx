@@ -139,10 +139,18 @@ export function Hero() {
             </MagneticButton>
             <MagneticButton
               className="btn btn--ghost"
-              href="/Susant_Kumar_Resume.pdf"
-              download
+              href="/resume/Susant_Kumar_Resume.pdf"
+              download="Susant_Kumar_Resume.pdf"
             >
               Download Resume
+            </MagneticButton>
+            <MagneticButton
+              className="btn btn--ghost"
+              href="/resume/Susant_Kumar_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Resume
             </MagneticButton>
             <MagneticButton
               className="btn btn--ghost"
