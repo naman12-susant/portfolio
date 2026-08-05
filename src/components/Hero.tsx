@@ -14,7 +14,7 @@ import linkedinLogo from '../assets/logos/linkedin.png'
 import gmailLogo from '../assets/logos/gmail.png'
 import ImageTrail from './ImageTrail'
 
-const trailImages = [heroImage, heroPng, instagramLogo, githubLogo, linkedinLogo, gmailLogo, heroImage]
+const trailImages = [heroImage, heroPng, heroImage, heroPng, heroImage, heroPng, heroImage]
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
