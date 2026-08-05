@@ -31,7 +31,7 @@ function getMouseDistance(p1: { x: number; y: number }, p2: { x: number; y: numb
 class ImageItem {
   DOM: { el: HTMLElement; inner: HTMLElement | null } = { el: null!, inner: null };
   defaultStyle = { scale: 1, x: 0, y: 0, opacity: 0 };
-  rect: DOMRect | null = null;
+  rect: { width: number; height: number } = { width: 140, height: 140 };
   resize: (() => void) | null = null;
 
   constructor(DOM_el: HTMLElement) {
@@ -48,11 +48,15 @@ class ImageItem {
     window.addEventListener('resize', this.resize);
   }
   getRect() {
-    this.rect = this.DOM.el.getBoundingClientRect();
+    const r = this.DOM.el.getBoundingClientRect();
+    this.rect = {
+      width: r.width || 140,
+      height: r.height || 140
+    };
   }
 }
 
-class ImageTrailVariant1 {
+class ImageTrailEngine {
   container: HTMLElement;
   DOM: { el: HTMLElement };
   images: ImageItem[];
@@ -72,10 +76,10 @@ class ImageTrailVariant1 {
     this.images = Array.from(this.DOM.el.querySelectorAll<HTMLElement>('.content__img')).map(img => new ImageItem(img));
     this.imagesTotal = this.images.length;
     this.imgPosition = 0;
-    this.zIndexVal = 1;
+    this.zIndexVal = 10;
     this.activeImagesCount = 0;
     this.isIdle = true;
-    this.threshold = 80;
+    this.threshold = 40; // Lower threshold so trail triggers easily
 
     this.mousePos = { x: 0, y: 0 };
     this.lastMousePos = { x: 0, y: 0 };
@@ -104,15 +108,15 @@ class ImageTrailVariant1 {
 
   render() {
     const distance = getMouseDistance(this.mousePos, this.lastMousePos);
-    this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
-    this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
+    this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.15);
+    this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.15);
 
     if (distance > this.threshold) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
-    if (this.isIdle && this.zIndexVal !== 1) {
-      this.zIndexVal = 1;
+    if (this.isIdle && this.zIndexVal !== 10) {
+      this.zIndexVal = 10;
     }
     requestAnimationFrame(() => this.render());
   }
@@ -121,7 +125,9 @@ class ImageTrailVariant1 {
     ++this.zIndexVal;
     this.imgPosition = this.imgPosition < this.imagesTotal - 1 ? this.imgPosition + 1 : 0;
     const img = this.images[this.imgPosition];
-    if (!img || !img.rect) return;
+    if (!img) return;
+
+    img.getRect();
 
     gsap.killTweensOf(img.DOM.el);
     gsap
@@ -133,14 +139,15 @@ class ImageTrailVariant1 {
         img.DOM.el,
         {
           opacity: 1,
-          scale: 1,
+          scale: 0.6,
           zIndex: this.zIndexVal,
           x: this.cacheMousePos.x - img.rect.width / 2,
           y: this.cacheMousePos.y - img.rect.height / 2
         },
         {
-          duration: 0.4,
-          ease: 'power1',
+          duration: 0.5,
+          ease: 'power2.out',
+          scale: 1,
           x: this.mousePos.x - img.rect.width / 2,
           y: this.mousePos.y - img.rect.height / 2
         },
@@ -150,11 +157,11 @@ class ImageTrailVariant1 {
         img.DOM.el,
         {
           duration: 0.4,
-          ease: 'power3',
+          ease: 'power3.in',
           opacity: 0,
-          scale: 0.2
+          scale: 0.3
         },
-        0.4
+        0.35
       );
   }
 
@@ -175,16 +182,16 @@ type Props = {
   variant?: number;
 };
 
-export default function ImageTrail({ items = [], variant = 1 }: Props) {
+export default function ImageTrail({ items = [] }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current || items.length === 0) return;
-    new ImageTrailVariant1(containerRef.current);
-  }, [variant, items]);
+    new ImageTrailEngine(containerRef.current);
+  }, [items]);
 
   return (
-    <div className="content" ref={containerRef}>
+    <div className="image-trail-container" ref={containerRef}>
       {items.map((url, i) => (
         <div className="content__img" key={i}>
           <div className="content__img-inner" style={{ backgroundImage: `url(${url})` }} />

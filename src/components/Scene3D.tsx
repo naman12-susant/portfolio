@@ -23,17 +23,17 @@ function Core() {
   return (
     <Float speed={1.35} rotationIntensity={0.45} floatIntensity={1.05}>
       <mesh ref={mesh} scale={1.02}>
-        <icosahedronGeometry args={[1.15, 4]} />
+        <icosahedronGeometry args={[1.15, 2]} />
         <MeshDistortMaterial
           color="#e8a87c"
-          distort={0.38}
-          speed={1.8}
-          roughness={0.06}
-          metalness={0.85}
+          distort={0.32}
+          speed={1.5}
+          roughness={0.12}
+          metalness={0.82}
           emissive="#6b3d22"
           emissiveIntensity={0.18}
-          clearcoat={1.0}
-          clearcoatRoughness={0.04}
+          clearcoat={0.8}
+          clearcoatRoughness={0.08}
         />
       </mesh>
     </Float>

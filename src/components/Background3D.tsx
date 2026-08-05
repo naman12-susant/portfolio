@@ -44,24 +44,18 @@ function MorphCore({ scrollProgress, sectionIndex }: SceneProps) {
   return (
     <Float speed={1.2} rotationIntensity={0.35} floatIntensity={0.7}>
       <mesh ref={mesh} position={[1.6, 0.1, -0.4]} castShadow>
-        <icosahedronGeometry args={[1.35, 4]} />
+        <icosahedronGeometry args={[1.35, 2]} />
         <meshPhysicalMaterial
           color="#e8a87c"
-          roughness={0.08}
-          metalness={0.88}
-          clearcoat={1.0}
-          clearcoatRoughness={0.05}
-          reflectivity={1.0}
+          roughness={0.12}
+          metalness={0.82}
+          clearcoat={0.8}
+          clearcoatRoughness={0.08}
+          reflectivity={0.9}
           emissive="#6b3d22"
           emissiveIntensity={0.15}
-          transmission={0.18}
-          thickness={1.2}
-          ior={1.8}
-          sheen={0.3}
-          sheenColor="#ffd4a8"
-          sheenRoughness={0.2}
-          iridescence={0.3}
-          iridescenceIOR={1.3}
+          transmission={0.12}
+          thickness={1.0}
         />
       </mesh>
     </Float>
