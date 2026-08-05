@@ -132,7 +132,7 @@ export function Contact() {
             ) : null}
           </div>
 
-          <div className="contact__social-buttons" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="contact__social-buttons" style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', width: '100%', margin: '0 auto' }}>
             <InstagramButton />
             
             <MagneticButton className="btn btn--ghost" href={resume.github} target="_blank" icon={<IconGithubLogo />}>
