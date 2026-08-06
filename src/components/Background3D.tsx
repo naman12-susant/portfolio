@@ -1,5 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ContactShadows, Environment, Float, MeshReflectorMaterial, Sparkles } from '@react-three/drei'
+import Spline from '@splinetool/react-spline'
 import { useEffect, useMemo, useRef, type MutableRefObject } from 'react'
 import type { Group, Mesh } from 'three'
 import { Color } from 'three'
@@ -340,22 +341,13 @@ export function Background3D() {
   }, [])
 
   const isMobile = typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window)
-
   return (
     <div className="bg3d" aria-hidden>
-      <Canvas
-        shadows={!isMobile}
-        dpr={isMobile ? 1 : [1, 1.25]}
-        camera={{ position: [0, 0.2, 6.2], fov: 42 }}
-        gl={{ antialias: !isMobile, alpha: false, powerPreference: 'high-performance' }}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <SceneContent
-          scrollProgress={scrollProgress}
-          mouse={mouse}
-          sectionIndex={sectionIndex}
-        />
-      </Canvas>
+      <div style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
+        {/* Spline scene placed at public/spline/scene.spline */}
+        {/* pointerEvents disabled so UI remains interactive */}
+        <Spline scene="/spline/scene.spline" />
+      </div>
       <div className="bg3d__vignette" />
     </div>
   )
