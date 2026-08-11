@@ -75,7 +75,8 @@ export function Background3D() {
 
       // Replace embedded video textures with the project's MP4 for exact match
       try {
-        app._scene.traverse((obj: any) => {
+        const scene = (app as any)._scene
+        scene?.traverse((obj: any) => {
           if (!obj.isMesh) return
           const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
           mats.forEach((mat: any) => {
@@ -127,10 +128,12 @@ export function Background3D() {
       // Specifically target known frame/goggle mesh names and enforce an upward offset
       try {
         const FRAME_NAMES = ['gogglllee', 'gogglllee.001', 'gogglllee.002']
-        const OFFSET_Y = 140 // upward offset in scene units; adjust if you want more/less
+        const OFFSET_Y = 220 // upward offset in scene units; adjust if you want more/less
+        const frameTargetY = new Map<string, number>()
 
         const applyOffset = () => {
           try {
+            const scene = (app as any)._scene
             FRAME_NAMES.forEach((n) => {
               try {
                 // some runtimes expose getObjectByName-like helpers; fall back to traverse
@@ -141,15 +144,18 @@ export function Background3D() {
                     if ((all[i].name || '').toString() === n) { found = all[i]; break }
                   }
                 }
-                if (!found && app._scene && app._scene.getObjectByName) {
-                  found = app._scene.getObjectByName(n)
+                if (!found && scene && scene.getObjectByName) {
+                  found = scene.getObjectByName(n)
                 }
-                if (!found && app._scene) {
-                  app._scene.traverse((obj: any) => { if (!found && obj && obj.isMesh && (obj.name || '').toString() === n) found = obj })
+                if (!found && scene) {
+                  scene.traverse((obj: any) => { if (!found && obj && obj.isMesh && (obj.name || '').toString() === n) found = obj })
                 }
                 if (found) {
                   found.position = found.position || { x: 0, y: 0, z: 0 }
-                  found.position.y = (found.position.y || 0) + OFFSET_Y
+                  if (!frameTargetY.has(n)) {
+                    frameTargetY.set(n, (found.position.y || 0) + OFFSET_Y)
+                  }
+                  found.position.y = frameTargetY.get(n)!
                   if (found.updateMatrix) found.updateMatrix()
                 }
               } catch (e) {
@@ -189,6 +195,14 @@ export function Background3D() {
         }
       })
       videosRef.current = []
+      overrideIntervalsRef.current.forEach((id) => {
+        try {
+          clearInterval(id)
+        } catch (e) {
+          // ignore
+        }
+      })
+      overrideIntervalsRef.current = []
     }
   }, [])
 
