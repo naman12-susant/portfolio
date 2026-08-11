@@ -293,6 +293,33 @@
   gap: 0.85rem;
 }
 
+/* When the menu is open hide the header resume button to avoid overlap with the panel */
+.staggered-menu-wrapper[data-open] .sm-resume-btn {
+  display: none;
+}
+
+/* Panel resume button (shown only when menu is open) */
+.sm-panel-resumeWrap {
+  margin-bottom: 0.75rem;
+}
+.sm-panel-resume-btn {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.6rem;
+  border: 1.25px solid rgba(192, 132, 252, 0.45);
+  background: rgba(192, 132, 252, 0.06);
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.staggered-menu-wrapper[data-open] .sm-panel-resume-btn {
+  display: inline-flex;
+  pointer-events: auto;
+}
+
 .sm-resume-btn {
   display: inline-flex;
   align-items: center;

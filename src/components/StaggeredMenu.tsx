@@ -440,6 +440,27 @@ export function StaggeredMenu({
       <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>
         <div className="sm-panel-inner">
           <ul className="sm-panel-list" role="list" data-numbering={displayItemNumbering || undefined}>
+            {resumeHref && (
+              <li className="sm-panel-itemWrap sm-panel-resumeWrap">
+                <a
+                  className="sm-panel-resume-btn"
+                  href={resumeHref}
+                  download={resumeDownload ?? true}
+                  aria-label="Download resume"
+                  onClick={(e) => {
+                    // Let the anchor handle downloads; also close the menu for UX
+                    closeMenu()
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  <span>Resume</span>
+                </a>
+              </li>
+            )}
             {(items.length ? items : []).map((it, idx) => (
               <li className="sm-panel-itemWrap" key={`${it.label}-${idx}`}>
                 <a

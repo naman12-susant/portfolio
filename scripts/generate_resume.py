@@ -306,7 +306,7 @@ def build_pdf():
         "- <b>Participant:</b> Project Horizon: GPAI Case Competition (IIT Madras)",
         "- <b>Participant:</b> EY Techathon 6.0 (EY)",
         "- <b>Participant:</b> HackWithUttarPradesh 2025 (Chandigarh University)",
-        "- <b>Participant:</b> Frontend Battle - Vibe Coding Competition (IIT Bhubaneswar)",
+        "- <b>Participant:</b> Frontend Battle – Vibe Coding Competition (IIT Bhubaneswar)",
         "- <b>Participant:</b> Ethos Hackathons 2025 (IIT Guwahati)",
         "- <b>Participant:</b> HP Power Lab 2.0 (HPCL)",
     ]
