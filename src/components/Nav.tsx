@@ -36,7 +36,6 @@ export function Nav() {
 
   const menuItems = [
     ...links,
-    { href: '/resume/Susant_Kumar_Resume_Updated.pdf', label: 'Download Resume', ariaLabel: 'Download resume' },
     { href: `mailto:${resume.email}`, label: 'Email me', ariaLabel: 'Email me' },
   ]
 
@@ -79,7 +78,7 @@ export function Nav() {
   return (
     <header className={`nav${scrolled ? ' is-scrolled' : ''}${!visible ? ' is-hidden' : ''}${open ? ' is-open' : ''}`}>
       <div className="nav__inner">
-        <StaggeredMenu
+          <StaggeredMenu
           logoUrl=""
           logo={
             <a
@@ -105,6 +104,8 @@ export function Nav() {
           accentColor="#c084fc"
           isFixed={true}
           closeOnClickAway={true}
+          resumeHref="/resume/Susant_Kumar_Resume_Updated.pdf"
+          resumeDownload="Susant_Kumar_Resume.pdf"
           onMenuOpen={() => setOpen(true)}
           onMenuClose={() => setOpen(false)}
           onItemClick={handleItemClick}

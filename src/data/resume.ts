@@ -85,8 +85,8 @@ export const resume = {
     },
   ],
   awards: [
-    { title: 'Semi-Finalist', org: 'ET-AI Hackathon 2026 – The Economic Times', tier: 'gold' as const },
     { title: 'Finalist', org: 'India Innovates 2026 – National-Level Hackathon', tier: 'gold' as const },
+    { title: 'Semi-Finalist', org: 'ET-AI Hackathon 2026 – The Economic Times', tier: 'gold' as const },
     { title: 'Participant', org: 'Machine Learning Hackathon (IIT Bhubaneswar)', tier: 'base' as const },
     { title: 'Participant', org: 'Shaastra Smart City Challenge (IIT Madras)', tier: 'base' as const },
     { title: 'Participant', org: 'Project Horizon: GPAI Case Competition (IIT Madras)', tier: 'base' as const },

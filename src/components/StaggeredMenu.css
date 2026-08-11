@@ -235,7 +235,8 @@
   font-size: clamp(1.8rem, 4.5vw, 3.2rem);
   line-height: 0.96;
   letter-spacing: -1px;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   transition: color 0.25s ease;
 }
 
