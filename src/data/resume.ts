@@ -92,7 +92,7 @@ export const resume = {
     { title: 'Participant', org: 'Project Horizon: GPAI Case Competition (IIT Madras)', tier: 'base' as const },
     { title: 'Participant', org: 'EY Techathon 6.0 (EY)', tier: 'base' as const },
     { title: 'Participant', org: 'HackWithUttarPradesh 2025 (Chandigarh University)', tier: 'base' as const },
-    { title: 'Participant', org: 'Frontend Battle – Vibe Coding Competition (IIT Bhubaneswar)', tier: 'base' as const },
+    { title: 'Participant', org: 'Frontend Battle - Vibe Coding Competition (IIT Bhubaneswar)', tier: 'base' as const },
     { title: 'Participant', org: 'Ethos Hackathons 2025 (IIT Guwahati)', tier: 'base' as const },
     { title: 'Participant', org: 'HP Lab 2.0 (HPCL)', tier: 'base' as const },
   ],

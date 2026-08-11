@@ -363,3 +363,13 @@
     padding: 0.45rem;
   }
 }
+
+/* When the menu panel is open, hide the header resume button to avoid overlapping */
+.staggered-menu-wrapper[data-open='true'] .sm-resume-btn {
+  display: none !important;
+}
+
+/* Ensure panel appears above header during animations (defensive) */
+.staggered-menu-wrapper[data-open='true'] .staggered-menu-panel {
+  z-index: 30;
+}
