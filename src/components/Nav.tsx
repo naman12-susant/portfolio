@@ -36,7 +36,7 @@ export function Nav() {
 
   const menuItems = [
     ...links,
-    { href: '/resume/Susant_Kumar_Resume.pdf', label: 'Download Resume', ariaLabel: 'Download resume' },
+    { href: '/resume/Susant_Kumar_Resume_Updated.pdf', label: 'Download Resume', ariaLabel: 'Download resume' },
     { href: `mailto:${resume.email}`, label: 'Email me', ariaLabel: 'Email me' },
   ]
 
@@ -51,10 +51,28 @@ export function Nav() {
       window.location.href = href
       return
     }
+    // If the link points to a PDF (resume), trigger a forced download preserving the original bytes
+    if (href.endsWith('.pdf') || href.includes('/resume/')) {
+      try {
+        const a = document.createElement('a')
+        a.href = href
+        a.download = 'Susant_Kumar_Resume.pdf'
+        a.style.display = 'none'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+      } catch (e) {
+        // fallback: navigate to the file in the same tab
+        window.location.href = href
+      }
+      return
+    }
+
     if (href.startsWith('/') && !href.startsWith('#')) {
       window.location.href = href
       return
     }
+
     goTo(href)
   }
 
@@ -90,8 +108,6 @@ export function Nav() {
           onMenuOpen={() => setOpen(true)}
           onMenuClose={() => setOpen(false)}
           onItemClick={handleItemClick}
-          resumeHref="/resume/Susant_Kumar_Resume.pdf"
-          resumeDownload="Susant_Kumar_Resume.pdf"
           className="nav-staggered-menu"
         />
       </div>

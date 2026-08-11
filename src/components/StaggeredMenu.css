@@ -232,7 +232,7 @@
   color: #f8fafc;
   text-decoration: none;
   font-weight: 700;
-  font-size: clamp(2.4rem, 4.5vw, 3.2rem);
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
   line-height: 0.96;
   letter-spacing: -1px;
   white-space: nowrap;
@@ -280,6 +280,8 @@
   }
   .sm-panel-item {
     font-size: clamp(2rem, 8vw, 2.6rem);
+    white-space: normal;
+    word-break: break-word;
   }
 }
 
