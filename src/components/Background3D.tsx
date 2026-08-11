@@ -1,26 +1,65 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import Spline from '@splinetool/react-spline'
-import type { Application } from '@splinetool/runtime'
+import type { Application, SPEObject } from '@splinetool/runtime'
+
+const HIDE_OBJECT_NAME = /(rectangle|rect|box|panel|plane|ground|floor|back|shadow|screen|card)/i
+
+function hideBlackObject(obj: SPEObject) {
+  if (!obj.name) return
+  const name = obj.name.toString().trim()
+  if (HIDE_OBJECT_NAME.test(name)) {
+    obj.hide()
+  }
+}
 
 export function Background3D() {
-  const handleSplineLoad = (app: Application) => {
-    // Debug: print scene objects so we can identify any unwanted panels.
-    const objects = app.getAllObjects().map((obj) => ({
-      name: obj.name,
-      uuid: obj.uuid,
-      visible: obj.visible,
-    }))
-    console.log('Spline scene objects:', objects)
+  const bgRef = useRef<HTMLDivElement | null>(null)
+  const motionRef = useRef({ tx: 0, ty: 0, rx: 0, ry: 0, targetX: 0, targetY: 0, targetRX: 0, targetRY: 0 })
+  const rafRef = useRef<number | null>(null)
 
-    // Expose the loaded app for manual debugging from the browser console.
-    ;(window as any).splineApp = app
+  useEffect(() => {
+    const handlePointerMove = (event: PointerEvent) => {
+      const nx = (event.clientX / window.innerWidth - 0.5) * 2
+      const ny = (event.clientY / window.innerHeight - 0.5) * 2
+      motionRef.current.targetX = nx * 12
+      motionRef.current.targetY = ny * 12
+      motionRef.current.targetRX = -ny * 4
+      motionRef.current.targetRY = nx * 4
+    }
+
+    const update = () => {
+      const motion = motionRef.current
+      motion.tx += (motion.targetX - motion.tx) * 0.12
+      motion.ty += (motion.targetY - motion.ty) * 0.12
+      motion.rx += (motion.targetRX - motion.rx) * 0.12
+      motion.ry += (motion.targetRY - motion.ry) * 0.12
+
+      if (bgRef.current) {
+        bgRef.current.style.transform = `perspective(1200px) translate3d(${motion.tx}px, ${motion.ty}px, 0) rotateX(${motion.rx}deg) rotateY(${motion.ry}deg)`
+      }
+
+      rafRef.current = requestAnimationFrame(update)
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+    rafRef.current = requestAnimationFrame(update)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  const handleSplineLoad = (app: Application) => {
+    app.setBackgroundColor('transparent')
+    app.getAllObjects()?.forEach(hideBlackObject)
   }
 
   return (
-    <div className="bg3d" aria-hidden>
+    <div ref={bgRef} className="bg3d" aria-hidden>
       <SplineErrorBoundary>
-        <div style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
-          <Spline scene="/spline/scene.splinecode" onLoad={handleSplineLoad} />
+        <div style={{ width: '100%', height: '100%', pointerEvents: 'none', transformStyle: 'preserve-3d' }}>
+          <Spline scene="/spline/scene.splinecode" renderOnDemand={false} onLoad={handleSplineLoad} />
         </div>
       </SplineErrorBoundary>
       <div className="bg3d__vignette" />
