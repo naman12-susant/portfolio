@@ -616,7 +616,7 @@ ul {
 
 .hero__image {
   width: 100%;
-  max-width: 420px;
+  max-width: clamp(220px, 52vw, 420px);
   height: auto;
   object-fit: cover;
   border-radius: 1.75rem;
@@ -828,7 +828,7 @@ ul {
 /* Skills */
 .skills__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
   margin-top: 3rem;
 }
@@ -838,7 +838,7 @@ ul {
   border-radius: var(--radius);
   border: 1px solid var(--line);
   background: var(--bg-elevated);
-  min-height: 14rem;
+  min-height: 12rem;
   transition: transform 0.35s var(--ease), border-color 0.35s;
 }
 
@@ -1253,6 +1253,10 @@ ul {
 
   .edu-card {
     padding: 1.5rem;
+  }
+
+  .project {
+    padding: 1rem;
   }
 
   .contact__links {
