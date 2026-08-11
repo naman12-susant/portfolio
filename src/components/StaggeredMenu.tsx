@@ -447,7 +447,7 @@ export function StaggeredMenu({
                   href={resumeHref}
                   download={resumeDownload ?? true}
                   aria-label="Download resume"
-                  onClick={(e) => {
+                  onClick={() => {
                     // Let the anchor handle downloads; also close the menu for UX
                     closeMenu()
                   }}
