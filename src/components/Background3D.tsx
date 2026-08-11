@@ -6,7 +6,7 @@ export function Background3D() {
     <div className="bg3d" aria-hidden>
       <SplineErrorBoundary>
         <div style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
-          <Spline scene="/spline/scene.spline" />
+          <Spline scene="/spline/scene.splinecode" />
         </div>
       </SplineErrorBoundary>
       <div className="bg3d__vignette" />
