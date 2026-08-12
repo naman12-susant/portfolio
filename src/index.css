@@ -27,9 +27,14 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--ink);
@@ -71,7 +76,10 @@ ul {
 }
 
 #root {
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
+  overflow-x: clip;
 }
 
 .ambient {
@@ -79,7 +87,7 @@ ul {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .ambient__blob {
