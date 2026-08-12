@@ -13,6 +13,7 @@ import { TargetCursor } from './components/TargetCursor'
 import { ClickSpark } from './components/ClickSpark'
 import { TransitionProvider } from './components/TransitionProvider'
 import { Background3D } from './components/Background3D'
+import { FooterContacts } from './components/FooterContacts'
 import { resume } from './data/resume'
 
 export default function App() {
@@ -44,10 +45,13 @@ export default function App() {
         </main>
 
         <footer className="footer container">
-          <span>
-            © {new Date().getFullYear()} {resume.name}
-          </span>
-          <span>Designed & built for user-centered craft</span>
+          <div className="footer__row">
+            <span>
+              © {new Date().getFullYear()} {resume.name}
+            </span>
+            <span className="footer__note">Designed & built for user-centered craft</span>
+          </div>
+          <FooterContacts />
         </footer>
       </div>
     </TransitionProvider>

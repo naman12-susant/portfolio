@@ -15,6 +15,8 @@
   --font-body: 'Figtree', sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --nav-h: 4.5rem;
+  --bg3d-offset-y: -1.25rem;
+  --hero-visual-offset-y: -6rem;
 }
 
 *,
@@ -140,6 +142,21 @@ ul {
     radial-gradient(circle at 82% 12%, rgba(232, 168, 124, 0.06), transparent 24%);
 }
 
+.bg3d__scene {
+  --bg3d-x: 0px;
+  --bg3d-y: 0px;
+  --bg3d-rotate-x: 0deg;
+  --bg3d-rotate-y: 0deg;
+  position: absolute;
+  inset: -2rem;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(var(--bg3d-x), calc(var(--bg3d-offset-y) + var(--bg3d-y)), 0)
+    rotateX(var(--bg3d-rotate-x)) rotateY(var(--bg3d-rotate-y));
+  transform-origin: center center;
+  transform-style: preserve-3d;
+}
+
 .bg3d canvas {
   width: 100% !important;
   height: 100% !important;
@@ -225,7 +242,7 @@ ul {
   left: 0;
   right: 0;
   height: var(--nav-h);
-  z-index: 40;
+  z-index: 90;
   display: flex;
   align-items: center;
   transition: transform 0.32s ease, background 0.35s var(--ease), border-color 0.35s var(--ease), backdrop-filter 0.35s;
@@ -1054,10 +1071,90 @@ ul {
   padding: 1.75rem 0 2.5rem;
   color: var(--muted);
   font-size: 0.9rem;
+  display: grid;
+  gap: 1.1rem;
+  min-width: 0;
+}
+
+.footer__row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  min-width: 0;
+}
+
+.footer__note {
+  text-align: right;
+}
+
+.footer__contacts {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  gap: 0.65rem 0.75rem;
+  min-width: 0;
+}
+
+.footer__contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s var(--ease);
+}
+
+.footer__contact-link:hover,
+.footer__contact-link:focus-visible {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.footer__contact-link:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.footer__contact-link--text {
+  padding-inline: 0.85rem;
+}
+
+.footer__contact-icon {
+  flex: 0 0 auto;
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--teal);
+}
+
+.footer__contact-copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.05rem;
+}
+
+.footer__contact-copy small {
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.footer__contact-copy strong {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 960px) {
@@ -1210,10 +1307,23 @@ ul {
     white-space: normal;
   }
 
-  .footer {
+  .footer__row {
     flex-direction: column;
     align-items: center;
     text-align: center;
+  }
+
+  .footer__note {
+    text-align: center;
+  }
+
+  .footer__contacts {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .footer__contact-link {
+    flex: 1 1 10rem;
   }
 
   .cursor {
@@ -1538,6 +1648,12 @@ ul {
   background: linear-gradient(90deg, var(--teal), transparent);
 }
 
+@media (min-width: 961px) {
+  .hero__visual {
+    margin-top: var(--hero-visual-offset-y);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1563,6 +1679,11 @@ ul {
    ========================================================================== */
 
 @media (max-width: 960px) {
+  .bg3d__scene {
+    inset: 0;
+    --bg3d-offset-y: 0rem;
+  }
+
   .container {
     width: min(940px, calc(100% - 2rem));
   }
@@ -1729,11 +1850,24 @@ ul {
     white-space: normal;
   }
 
-  .footer {
+  .footer__row {
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 0.75rem;
+  }
+
+  .footer__note {
+    text-align: center;
+  }
+
+  .footer__contacts {
+    gap: 0.55rem;
+  }
+
+  .footer__contact-link {
+    flex-basis: 100%;
+    justify-content: center;
   }
 
   .cursor {
