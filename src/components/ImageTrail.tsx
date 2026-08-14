@@ -105,6 +105,10 @@ class ImageTrailEngine {
     this.handlePointerMove = (ev: MouseEvent | TouchEvent) => {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
+      // Wake the loop if it stopped while idle
+      if (this.rafId === null) {
+        this.loop();
+      }
     };
 
     this.initRender = (ev: MouseEvent | TouchEvent) => {
@@ -133,6 +137,12 @@ class ImageTrailEngine {
 
   loop() {
     this.render();
+    // Auto-stop the rAF loop when idle to save CPU.
+    // It will be restarted on the next pointer/touch event.
+    if (this.isIdle && this.activeImagesCount === 0) {
+      this.rafId = null;
+      return;
+    }
     this.rafId = requestAnimationFrame(() => this.loop());
   }
 

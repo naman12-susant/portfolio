@@ -27,6 +27,12 @@ export function SplashCursor({
     const canvas = canvasRef.current
     if (!canvas) return
 
+    // Skip the entire WebGL fluid simulation on touch / coarse-pointer devices.
+    // Mobile phones have no cursor, so this effect is invisible yet burns a full
+    // WebGL context at 60 fps alongside the Spline background.
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
+    if (isCoarsePointer) return
+
     let isActive = true
 
     function pointerPrototype() {
@@ -679,6 +685,24 @@ export function SplashCursor({
     let lastUpdateTime = Date.now()
     let colorUpdateTimer = 0.0
 
+    // Pause / resume the simulation based on page visibility
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        isActive = false
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current)
+          animationFrameId.current = null
+        }
+      } else {
+        if (!isActive) {
+          isActive = true
+          lastUpdateTime = Date.now()
+          updateFrame()
+        }
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     function updateFrame() {
       if (!isActive) return
       const dt = calcDeltaTime()
@@ -1043,6 +1067,7 @@ export function SplashCursor({
 
     return () => {
       isActive = false
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current)
         animationFrameId.current = null

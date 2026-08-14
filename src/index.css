@@ -1721,6 +1721,26 @@ ul {
 }
 
 @media (max-width: 768px) {
+  /* Disable heavy SVG noise texture filter on mobile GPUs */
+  body::before {
+    display: none;
+  }
+
+  /* Reduce heavy 90px blur filter and continuous animation on fixed ambient blobs */
+  .ambient__blob {
+    filter: blur(40px);
+    animation: none;
+  }
+
+  /* Reduce heavy backdrop-filter blur radii on mobile GPUs */
+  .nav.is-scrolled,
+  .nav__links,
+  .section--glass,
+  .hero__card-inner {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
   .container {
     padding-inline: 1.25rem;
   }

@@ -119,6 +119,10 @@ export function ParticleText({
       smoothY: 0,
     }
 
+    // Whether we are currently inside the viewport (controlled by IntersectionObserver)
+    let isVisible = true
+    let visibilityObserver: IntersectionObserver | null = null
+
     const startGather = (fromScatter = true) => {
       if (!particles.length) return
       const now = performance.now()
@@ -198,6 +202,16 @@ export function ParticleText({
       if (gathering && complete) {
         gathering = false
       }
+
+      // Stop the loop when idle: gathering finished and no pointer interaction.
+      // It will be restarted on the next pointer event or when the element
+      // re-enters the viewport.
+      const canRest = !gathering && !pointer.active
+      if (canRest) {
+        animationFrame = null
+        return
+      }
+
       animationFrame = window.requestAnimationFrame(render)
     }
 
@@ -213,7 +227,10 @@ export function ParticleText({
       width = Math.floor(rect.width)
       height = Math.floor(rect.height)
       if (width <= 0 || height <= 0) return
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const dpr = Math.min(
+      window.devicePixelRatio || 1,
+      window.matchMedia('(pointer: coarse)').matches ? 1.5 : 2
+    )
       canvas.width = Math.max(1, Math.floor(width * dpr))
       canvas.height = Math.max(1, Math.floor(height * dpr))
       canvas.style.width = '100%'
@@ -271,7 +288,11 @@ export function ParticleText({
           }
         }
       }
-      const maxParticles = Math.max(900, Math.min(5200, Math.floor((width * height) / 90)))
+      const isMobileDevice = window.matchMedia('(pointer: coarse)').matches
+      const maxParticles = Math.max(900, Math.min(
+        isMobileDevice ? 2500 : 5200,
+        Math.floor((width * height) / 90)
+      ))
       const stride = Math.max(1, Math.ceil(targets.length / maxParticles))
       const baseRgb = hexToRgb(color)
       const highlightRgb = hexToRgb(highlightColor)
@@ -328,6 +349,8 @@ export function ParticleText({
       pointer.x = event.clientX - rect.left
       pointer.y = event.clientY - rect.top
       pointer.active = true
+      // Wake the render loop if it went idle
+      ensureRenderLoop()
     }
 
     const handlePointerLeave = () => {
@@ -357,11 +380,33 @@ export function ParticleText({
 
     const resizeObserver = new ResizeObserver(queueSample)
     resizeObserver.observe(container)
+
+    // IntersectionObserver: pause the rAF loop when off-screen, resume when visible
+    visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        isVisible = entry.isIntersecting
+        if (isVisible) {
+          // Re-enter: restart gather and render loop
+          ensureRenderLoop()
+        } else {
+          // Off-screen: cancel the loop to save CPU/GPU
+          if (animationFrame !== null) {
+            window.cancelAnimationFrame(animationFrame)
+            animationFrame = null
+          }
+        }
+      },
+      { rootMargin: '120px' }
+    )
+    visibilityObserver.observe(container)
+
     sampleText()
 
     return () => {
       buildId += 1
       resizeObserver.disconnect()
+      visibilityObserver?.disconnect()
       reduceMotionQuery?.removeEventListener('change', handleReduceMotionChange)
       canvas.removeEventListener('pointerenter', handlePointerEnter)
       canvas.removeEventListener('pointermove', handlePointerMove)

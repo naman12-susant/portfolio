@@ -3,12 +3,16 @@ import Spline from '@splinetool/react-spline'
 import type { Application } from '@splinetool/runtime'
 
 type RuntimeApplication = Application & {
-  renderMode: 'auto' | 'manual' | 'continuous'
+  renderMode: 'auto' | 'manual' | 'continuous' | 'on-demand'
 }
 
 export function Background3D() {
   const splineAppRef = useRef<Application | null>(null)
   const splineSceneRef = useRef<HTMLDivElement | null>(null)
+
+  // Detect mobile (coarse pointer) once, outside effects
+  const isMobile =
+    typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
   const applyResponsiveZoom = () => {
     const width = window.innerWidth
@@ -21,16 +25,32 @@ export function Background3D() {
     }
   }
 
+  // Debounced resize handler — avoids thrashing during orientation changes
   useEffect(() => {
-    window.addEventListener('resize', applyResponsiveZoom)
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null
+
+    const handleResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        applyResponsiveZoom()
+      }, 200)
+    }
+
+    window.addEventListener('resize', handleResize, { passive: true })
     applyResponsiveZoom()
 
-    return () => window.removeEventListener('resize', applyResponsiveZoom)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      if (resizeTimer) clearTimeout(resizeTimer)
+    }
   }, [])
 
+  // Parallax effect — desktop only (pointer:fine)
   useEffect(() => {
     const scene = splineSceneRef.current
     if (!scene || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // Skip parallax on coarse-pointer devices — saves event-loop cost on mobile
+    if (window.matchMedia('(pointer: coarse)').matches) return
 
     let frame = 0
     let active = true
@@ -98,7 +118,12 @@ export function Background3D() {
   const handleSplineLoad = (app: Application) => {
     splineAppRef.current = app
     const runtimeApp = app as RuntimeApplication
-    runtimeApp.renderMode = 'continuous'
+
+    // On mobile: use on-demand rendering so Spline only renders when its
+    // internal animation system actually needs a new frame, instead of
+    // forcing a full 60 fps rAF loop unconditionally.
+    // On desktop: keep continuous for the smoothest experience.
+    runtimeApp.renderMode = isMobile ? 'on-demand' : 'continuous'
     runtimeApp.play()
     runtimeApp.requestRender()
     applyResponsiveZoom()
@@ -111,7 +136,36 @@ export function Background3D() {
     } catch {
       // Keep the authored scene running if an optional runtime call is unavailable.
     }
+
+    // Pause Spline rendering when the browser tab is hidden
+    const handleVisibilityChange = () => {
+      try {
+        if (document.hidden) {
+          ;(splineAppRef.current as RuntimeApplication).renderMode = 'manual'
+        } else {
+          ;(splineAppRef.current as RuntimeApplication).renderMode = isMobile
+            ? 'on-demand'
+            : 'continuous'
+          ;(splineAppRef.current as RuntimeApplication).requestRender()
+        }
+      } catch {
+        // Ignore if Spline API is unavailable
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    // Store cleanup on the ref so the component cleanup can reach it
+    ;(app as RuntimeApplication & { _visCleanup?: () => void })._visCleanup = () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }
+
+  // Cleanup visibility listener when component unmounts
+  useEffect(() => {
+    return () => {
+      const app = splineAppRef.current as (RuntimeApplication & { _visCleanup?: () => void }) | null
+      app?._visCleanup?.()
+    }
+  }, [])
 
   return (
     <div className="bg3d" aria-hidden>
