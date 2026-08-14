@@ -12,8 +12,8 @@ import { Skills } from './components/Skills'
 import { TargetCursor } from './components/TargetCursor'
 import { ClickSpark } from './components/ClickSpark'
 import { TransitionProvider } from './components/TransitionProvider'
-import { FooterContacts } from './components/FooterContacts'
 import { resume } from './data/resume'
+
 
 // Lazy-load heavy components so critical UI (nav, hero, buttons) is
 // interactive before the WebGL pipelines initialise.
@@ -66,7 +66,6 @@ export default function App() {
             </span>
             <span className="footer__note">Designed &amp; built for user-centered craft</span>
           </div>
-          <FooterContacts />
         </footer>
       </div>
     </TransitionProvider>
