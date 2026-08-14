@@ -61,13 +61,6 @@ export function FooterContacts() {
         target="_blank"
         icon={<IconInstagram className="footer__contact-icon" />}
       />
-      <FooterContactLink
-        href={resume.instagram2}
-        label="Social"
-        value="Instagram 2"
-        target="_blank"
-        icon={<IconInstagram className="footer__contact-icon" />}
-      />
     </nav>
   )
 }
