@@ -9,8 +9,7 @@ import { Section } from './Section'
 import heroImage from '../assets/naman_2.jpeg'
 import heroPng from '../assets/hero.png'
 import ImageTrail from './ImageTrail'
-
-const trailImages = [heroImage, heroPng, heroImage, heroPng, heroImage, heroPng, heroImage]
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -26,6 +25,11 @@ const fadeUp = {
 }
 
 export function Hero() {
+  const isMobile = useIsMobile()
+  const trailImages = isMobile
+    ? [heroImage, heroPng, heroImage]
+    : [heroImage, heroPng, heroImage, heroPng, heroImage, heroPng, heroImage]
+
   const [first, last] = resume.name.split(' ')
   const { goTo } = useSectionTransition()
 
@@ -108,10 +112,10 @@ export function Hero() {
             <ParticleText
               text={`${resume.name}`}
               particleSize={2}
-              density={4}
+              density={isMobile ? 7 : 4}
               color="#f8fafc"
               highlightColor="#a78bfa"
-              scatter={160}
+              scatter={isMobile ? 100 : 160}
               trigger="hover"
               className="hero__particle-text"
             />

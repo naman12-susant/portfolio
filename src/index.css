@@ -97,6 +97,7 @@ ul {
   border-radius: 50%;
   filter: blur(90px);
   opacity: 0.45;
+  will-change: transform;
   animation: drift 18s var(--ease) infinite alternate;
 }
 
@@ -1726,10 +1727,9 @@ ul {
     display: none;
   }
 
-  /* Reduce heavy 90px blur filter and continuous animation on fixed ambient blobs */
+  /* Reduce heavy 90px blur filter on mobile GPUs while keeping hardware-accelerated drift */
   .ambient__blob {
-    filter: blur(40px);
-    animation: none;
+    filter: blur(60px);
   }
 
   /* Reduce heavy backdrop-filter blur radii on mobile GPUs */

@@ -119,6 +119,19 @@ export function Background3D() {
     splineAppRef.current = app
     const runtimeApp = app as RuntimeApplication
 
+    // Cap pixel ratio on mobile — full DPR (2-3x) is wasted GPU work for a background layer
+    if (isMobile) {
+      const canvas = splineSceneRef.current?.querySelector('canvas')
+      if (canvas) {
+        const cappedDpr = Math.min(window.devicePixelRatio || 1, 1.5)
+        canvas.style.width = '100%'
+        canvas.style.height = '100%'
+        // Spline's runtime respects canvas backing-store size vs CSS size for effective resolution
+        canvas.width = canvas.clientWidth * cappedDpr
+        canvas.height = canvas.clientHeight * cappedDpr
+      }
+    }
+
     // On mobile: use on-demand rendering so Spline only renders when its
     // internal animation system actually needs a new frame, instead of
     // forcing a full 60 fps rAF loop unconditionally.

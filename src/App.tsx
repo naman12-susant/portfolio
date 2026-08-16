@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import { About } from './components/About'
 import { Awards } from './components/Awards'
 import { Contact } from './components/Contact'
@@ -25,6 +25,21 @@ const Background3D = lazy(() =>
 )
 
 export default function App() {
+  const [showBg3D, setShowBg3D] = useState(false)
+
+  useEffect(() => {
+    const start = () => {
+      if ('requestIdleCallback' in window) {
+        ;(window as any).requestIdleCallback(() => setShowBg3D(true), { timeout: 1500 })
+      } else {
+        setTimeout(() => setShowBg3D(true), 300)
+      }
+    }
+    if (document.readyState === 'complete') start()
+    else window.addEventListener('load', start, { once: true })
+    return () => window.removeEventListener('load', start)
+  }, [])
+
   return (
     <TransitionProvider>
       {/* SplashCursor is hidden on mobile (pointer:coarse) inside the component itself */}
@@ -35,11 +50,12 @@ export default function App() {
       <ClickSpark />
       <ScrollProgress />
 
-      {/* Background3D lazy-loads after critical UI — still initialises immediately
-          after the first render, just doesn't block the initial paint */}
-      <Suspense fallback={null}>
-        <Background3D />
-      </Suspense>
+      {/* Background3D lazy-loads after critical UI & first paint */}
+      {showBg3D && (
+        <Suspense fallback={null}>
+          <Background3D />
+        </Suspense>
+      )}
 
       <div className="ambient" aria-hidden>
         <div className="ambient__blob ambient__blob--a" />

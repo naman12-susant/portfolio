@@ -7,3 +7,7 @@ services:
     publishCommand: npm run build
     publishPath: dist
     plan: free
+    headers:
+      - path: /spline/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
