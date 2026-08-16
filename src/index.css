@@ -81,6 +81,7 @@ ul {
   width: 100%;
   max-width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: clip;
 }
 
@@ -383,6 +384,7 @@ ul {
 /* Hero */
 .hero {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   align-items: center;
   padding: calc(var(--nav-h) + 2rem) 0 4rem;
@@ -395,6 +397,7 @@ ul {
   gap: 2rem;
   align-items: center;
   min-height: calc(100vh - var(--nav-h) - 4rem);
+  min-height: calc(100dvh - var(--nav-h) - 4rem);
 }
 
 .hero__copy {
@@ -434,7 +437,7 @@ ul {
 
 .hero__brand {
   font-family: var(--font-display);
-  font-size: clamp(3.4rem, 8vw, 6.4rem);
+  font-size: clamp(2.5rem, 6vw + 1rem, 6rem);
   font-weight: 800;
   letter-spacing: -0.055em;
   line-height: 0.92;
@@ -447,7 +450,7 @@ ul {
 }
 
 .hero__headline {
-  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  font-size: clamp(1rem, 1.5vw + 0.75rem, 1.45rem);
   color: var(--ink);
   font-weight: 500;
   margin-bottom: 1rem;
@@ -1721,6 +1724,18 @@ ul {
   }
 }
 
+@media (max-width: 840px) {
+  .about__grid,
+  .skills__grid,
+  .awards__grid {
+    gap: 1rem;
+  }
+  .skill-card,
+  .award {
+    padding: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
   /* Disable heavy SVG noise texture filter on mobile GPUs */
   body::before {
@@ -1771,8 +1786,17 @@ ul {
     pointer-events: auto;
   }
 
+  .nav__links a,
+  .btn,
+  .nav__toggle,
+  .footer__contact-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
   .nav__links a {
-    padding: 0.9rem 0.25rem;
+    padding: 1rem 0.25rem;
     border-bottom: 1px solid var(--line);
     font-size: 1.05rem;
   }
